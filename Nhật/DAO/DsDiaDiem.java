@@ -4,7 +4,7 @@
  */
 package DAO;
 import DAO.KetNoiCSDL;
-import DiaDiem.DiaDiem;
+import DTO.DiaDiem;
 import java.util.*;
 import java.sql.*;
 import java.sql.Date;

@@ -13,6 +13,7 @@ import javax.swing.JPanel;
 public class GiaoDien extends javax.swing.JFrame {
     private GUI.HoaDon pnlhd;
     private JPanel pnlhome;
+    private GUI.DiaDiem pnldd;
     private java.awt.CardLayout cardLayout;
     /**
      * Creates new form GiaoDien
@@ -25,10 +26,12 @@ public class GiaoDien extends javax.swing.JFrame {
         cardLayout = (java.awt.CardLayout) pnlContent.getLayout();
         pnlhd =new GUI.HoaDon();
         pnlhome =new JPanel();
+        pnldd =new GUI.DiaDiem();
         pnlhome.add(new JLabel("Hello"));
         
         pnlContent.add(pnlhome,"Home");
         pnlContent.add(pnlhd,"HoaDon");
+        pnlContent.add(pnldd,"DiaDiem");
     }
 
     /**
@@ -43,6 +46,7 @@ public class GiaoDien extends javax.swing.JFrame {
         pnlMenu = new javax.swing.JPanel();
         lbhome = new javax.swing.JLabel();
         lbhoadon = new javax.swing.JLabel();
+        lbdiadiem = new javax.swing.JLabel();
         pnlContent = new javax.swing.JPanel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -65,15 +69,24 @@ public class GiaoDien extends javax.swing.JFrame {
             }
         });
 
+        lbdiadiem.setForeground(new java.awt.Color(255, 255, 255));
+        lbdiadiem.setText("Địa điểm");
+        lbdiadiem.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                lbdiadiemMouseClicked(evt);
+            }
+        });
+
         javax.swing.GroupLayout pnlMenuLayout = new javax.swing.GroupLayout(pnlMenu);
         pnlMenu.setLayout(pnlMenuLayout);
         pnlMenuLayout.setHorizontalGroup(
             pnlMenuLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(pnlMenuLayout.createSequentialGroup()
                 .addGap(25, 25, 25)
-                .addGroup(pnlMenuLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(lbhome)
-                    .addComponent(lbhoadon))
+                .addGroup(pnlMenuLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(lbhome, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(lbhoadon)
+                    .addComponent(lbdiadiem, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap(21, Short.MAX_VALUE))
         );
         pnlMenuLayout.setVerticalGroup(
@@ -83,7 +96,9 @@ public class GiaoDien extends javax.swing.JFrame {
                 .addComponent(lbhome)
                 .addGap(73, 73, 73)
                 .addComponent(lbhoadon)
-                .addContainerGap(450, Short.MAX_VALUE))
+                .addGap(75, 75, 75)
+                .addComponent(lbdiadiem)
+                .addContainerGap(359, Short.MAX_VALUE))
         );
 
         pnlContent.setLayout(new java.awt.CardLayout());
@@ -116,6 +131,12 @@ public class GiaoDien extends javax.swing.JFrame {
         cardLayout.show(pnlContent, "HoaDon");
     }//GEN-LAST:event_lbhoadonMouseClicked
 
+    private void lbdiadiemMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lbdiadiemMouseClicked
+        // TODO add your handling code here:
+        cardLayout.show(pnlContent, "DiaDiem");
+    }//GEN-LAST:event_lbdiadiemMouseClicked
+
+    
     /**
      * @param args the command line arguments
      */
@@ -152,6 +173,7 @@ public class GiaoDien extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JLabel lbdiadiem;
     private javax.swing.JLabel lbhoadon;
     private javax.swing.JLabel lbhome;
     private javax.swing.JPanel pnlContent;

@@ -6,7 +6,7 @@ package BUS;
 
 import DAO.DsCTietHD;
 import java.util.ArrayList;
-import hoadon.CTietHD;
+import DTO.CTietHD;
 /**
  *
  * @author Nhat
@@ -17,6 +17,7 @@ public class CTHoaDonBus {
     
     public CTHoaDonBus(){
     if(ds==null){
+        dao=new DsCTietHD();
         ds=dao.getDs();
     }
 }
@@ -37,6 +38,14 @@ public class CTHoaDonBus {
         return false;
     }
     
+    public CTietHD timCt(String mact,String makh){
+        for(CTietHD cthd:ds){
+            if(cthd.getMaHD().equals(mact) && cthd.getMaKHDi().equals(makh))
+                return cthd;
+        }
+        return null;
+    }
+        
     public boolean themCTietHd(CTietHD ct){
         ds.add(ct);
         dao.themCtietHD(ct);
@@ -80,4 +89,8 @@ public class CTHoaDonBus {
         }
         return flag; 
    }
+    public ArrayList<DTO.CTietHD> getDstheoma(String mahd){
+        DAO.DsCTietHD dao=new DAO.DsCTietHD();
+        return dao.getDstheoma(mahd);
+    }
 }

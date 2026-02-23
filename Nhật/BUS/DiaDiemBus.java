@@ -5,7 +5,7 @@
 package BUS;
 
 import DAO.DsDiaDiem;
-import DiaDiem.DiaDiem;
+import DTO.DiaDiem;
 import java.util.ArrayList;
 /**
  *

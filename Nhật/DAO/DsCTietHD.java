@@ -4,8 +4,9 @@
  */
 package DAO;
 import java.sql.*;
-import hoadon.CTietHD;
+import DTO.CTietHD;
 import java.util.*;
+import javax.swing.JOptionPane;
 /**
  *
  * @author Nhat
@@ -16,7 +17,7 @@ public class DsCTietHD {
 
     public ArrayList<CTietHD> getDs() {
         ArrayList<CTietHD> ds=new ArrayList<>();
-        String sql ="Select * from CTietHD";
+        String sql ="Select * from CThoadon";
         
         try(Connection conn=KetNoiCSDL.getConnection();
                 PreparedStatement ps=conn.prepareStatement(sql)){
@@ -31,17 +32,37 @@ public class DsCTietHD {
         }
         return ds;
     }
+    
+    public ArrayList<CTietHD> getDstheoma(String mahd){
+        ArrayList<CTietHD> ds=new ArrayList<>();
+        String sql ="Select * from CThoadon where mahd=?";
+        try(Connection conn =KetNoiCSDL.getConnection();
+                PreparedStatement ps=conn.prepareStatement(sql)){
+                ps.setString(1, mahd);
+                    ResultSet rs=ps.executeQuery();
+                    while(rs.next()){
+                        CTietHD cthd=maptoCthd(rs);
+                        ds.add(cthd);
+                    }
+                }
+        catch(SQLException ex){
+            ex.printStackTrace();
+        
+    }
+        return ds;
+    }
+    
 
     public CTietHD maptoCthd(ResultSet rs) throws SQLException{
         String MaHD =rs.getString("MaHD");
-        String MaKHDi =rs.getString("MaKHDi");
+        String MaKHDi =rs.getString("MaKHang");
         Float GiaVe =rs.getFloat("GiaVe");
         int sl=rs.getInt("Sl");
         return new CTietHD(MaHD,MaKHDi,GiaVe,sl);
     }
     
     public CTietHD TimHD(String mahd){
-        String sql = "Select * from CTietHD where mahd=?";
+        String sql = "Select * from CThoadon where mahd=?";
         try(Connection conn=KetNoiCSDL.getConnection();
                 PreparedStatement ps=conn.prepareStatement(sql)){
                 ps.setString(1, mahd);
@@ -56,7 +77,7 @@ public class DsCTietHD {
     }
     
     public boolean themCtietHD(CTietHD ct){
-        String sqlcheck ="Select * from ctiethd where mahd=? and makhang=?";
+        String sqlcheck ="Select * from cthoadon where mahd=? and makhang=?";
         String sqlinsert ="Insert into ctiethd(mahd,makhang,giave,sl) Values(?,?,?,?)";
         
         try(Connection conn=KetNoiCSDL.getConnection()){
@@ -82,7 +103,7 @@ public class DsCTietHD {
     }
     
     public boolean xoaCtietHd(String mact,String makh){
-        String sqlxoa= "Delete from CTietHD where mahd=? and makhang=?";
+        String sqlxoa= "Delete from cthoadon where mahd=? and makhang=?";
         try(Connection conn =KetNoiCSDL.getConnection();
                 PreparedStatement ps=conn.prepareStatement(sqlxoa)){
             ps.setString(1,mact);
@@ -96,7 +117,7 @@ public class DsCTietHD {
     }
     
     public boolean suaCthd(CTietHD ct){
-        String sql = "Update CTietHD set giave=?,sl=? where mahd=? and makhang=?";
+        String sql = "Update cthoadon set giave=?,sl=? where mahd=? and makhang=?";
         try(Connection conn=KetNoiCSDL.getConnection();
                 PreparedStatement ps=conn.prepareStatement(sql)){
             ps.setFloat(1,ct.getGiaVe() );

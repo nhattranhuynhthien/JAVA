@@ -3,8 +3,8 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
 package DAO;
-import hoadon.CTietHD;
-import hoadon.HoaDon;
+import DTO.CTietHD;
+import DTO.HoaDon;
 import java.sql.*;
 import java.util.*;
 import java.sql.*;
@@ -47,6 +47,7 @@ public class DsHoaDon {
                     }
         return null;
     }
+    
     public HoaDon maptoHd(ResultSet rs) throws SQLException{
         String mahd=rs.getString("MaHD");
         String makhtour = rs.getString("MaKHTour");

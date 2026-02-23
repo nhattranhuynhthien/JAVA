@@ -4,8 +4,8 @@
  */
 package BUS;
 import DAO.DsHoaDon;
-import hoadon.CTietHD;
-import hoadon.HoaDon;
+import DTO.CTietHD;
+import DTO.HoaDon;
 import java.util.ArrayList;
 
 /**
@@ -34,13 +34,27 @@ public class HoaDonBus {
     }
     
     public boolean timHd(HoaDon h){
-        for(HoaDon hd:ds){
-            if(hd.getMaHD().equals(h.getMaHD())){
-                return true;
+        if(dao.timHoaDon(h.getMaHD())!=null){
+            for(HoaDon hd: ds){
+                if(hd.getMaHD().equals(h.getMaHD())){
+                    return true;
+                }
             }
         }
         return false;
     }
+    
+    public HoaDon timHd(String mahd){
+        if(dao.timHoaDon(mahd)!=null){
+            for(HoaDon hd: ds){
+                if(hd.getMaHD().equals(mahd)){
+                    return hd;
+                }
+            }
+        }
+        return null;
+    }
+    
     public boolean themHoaDon(HoaDon hd,ArrayList<CTietHD> listct){
         if(timHd(hd)){
             return false;
