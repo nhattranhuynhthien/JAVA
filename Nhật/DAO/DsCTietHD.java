@@ -57,8 +57,7 @@ public class DsCTietHD {
         String MaHD =rs.getString("MaHD");
         String MaKHDi =rs.getString("MaKHang");
         Float GiaVe =rs.getFloat("GiaVe");
-        int sl=rs.getInt("Sl");
-        return new CTietHD(MaHD,MaKHDi,GiaVe,sl);
+        return new CTietHD(MaHD,MaKHDi,GiaVe);
     }
     
     public CTietHD TimHD(String mahd){
@@ -78,7 +77,7 @@ public class DsCTietHD {
     
     public boolean themCtietHD(CTietHD ct){
         String sqlcheck ="Select * from cthoadon where mahd=? and makhang=?";
-        String sqlinsert ="Insert into ctiethd(mahd,makhang,giave,sl) Values(?,?,?,?)";
+        String sqlinsert ="Insert into cthoadon(mahd,makhang,giave) Values(?,?,?)";
         
         try(Connection conn=KetNoiCSDL.getConnection()){
             try(PreparedStatement ps=conn.prepareStatement(sqlcheck)){
@@ -93,7 +92,6 @@ public class DsCTietHD {
                 ps.setString(1, ct.getMaHD());
                 ps.setString(2, ct.getMaKHDi());
                 ps.setFloat(3, ct.getGiaVe());
-                ps.setInt(4, ct.getSoLuong());
                 return ps.executeUpdate()>0;
             }
         }catch(SQLException e){
@@ -117,13 +115,12 @@ public class DsCTietHD {
     }
     
     public boolean suaCthd(CTietHD ct){
-        String sql = "Update cthoadon set giave=?,sl=? where mahd=? and makhang=?";
+        String sql = "Update cthoadon set giave=? where mahd=? and makhang=?";
         try(Connection conn=KetNoiCSDL.getConnection();
                 PreparedStatement ps=conn.prepareStatement(sql)){
             ps.setFloat(1,ct.getGiaVe() );
-            ps.setInt(2, ct.getSoLuong());
-            ps.setString(3, ct.getMaHD());
-            ps.setString(4, ct.getMaKHDi());
+            ps.setString(2, ct.getMaHD());
+            ps.setString(3, ct.getMaKHDi());
             
             return ps.executeUpdate()>0;
         }catch(SQLException e){
@@ -131,4 +128,51 @@ public class DsCTietHD {
         }
         return false;
     }
+     public float laygia(String mahd){
+        float gia=0;
+        String makht="";
+        String sql1="Select makhtour from hoadon where mahd=?";
+        try(Connection conn=KetNoiCSDL.getConnection();
+                PreparedStatement ps=conn.prepareStatement(sql1)){
+            ps.setString(1, mahd);
+            ResultSet rs=ps.executeQuery();
+            if(rs.next()){
+                makht=rs.getString("makhtour");
+            }
+        }catch (SQLException ex) {
+             ex.printStackTrace();
+         }
+        String sql ="Select t.dongia from kehoachtour k join tour t on k.matour = t.matour where k.makhtour=?";
+        try(Connection conn=KetNoiCSDL.getConnection();
+                PreparedStatement ps=conn.prepareStatement(sql)){
+            ps.setString(1, makht);
+            ResultSet rs=ps.executeQuery();
+            if(rs.next()){
+                gia=rs.getFloat("Dongia");
+            }}
+        catch(SQLException e){
+                    e.printStackTrace();
+                    }
+        return gia;
+        }
+     
+     public ArrayList<DTO.CTietHD> timNangcao(String tencot,String key){
+         ArrayList<DTO.CTietHD> ds =new ArrayList<>();
+         
+         String sql="Select * from cthoadon where "+tencot+" like ?";
+        
+         try(Connection conn =KetNoiCSDL.getConnection();
+                 PreparedStatement ps=conn.prepareStatement(sql)){
+             ps.setString(1, "%" + key + "%");
+             ResultSet rs=ps.executeQuery();
+             while(rs.next()){
+                 DTO.CTietHD ct =maptoCthd(rs);
+                 ds.add(ct);
+             }
+             
+         }catch(SQLException e){
+             e.printStackTrace();
+         }
+         return ds;
+     }
 }

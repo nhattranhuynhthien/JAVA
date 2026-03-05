@@ -6,7 +6,11 @@ package GUI;
 import DAO.DsDiaDiem;
 import BUS.DiaDiemBus;
 import BUS.HoaDonBus;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
+import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 
 /**
@@ -21,6 +25,7 @@ public class DiaDiem extends javax.swing.JPanel {
      */
     public DiaDiem() {
         initComponents();
+        bus=new BUS.DiaDiemBus();
         model = (DefaultTableModel) tbldd.getModel();
         loadData();
     }
@@ -35,6 +40,7 @@ public class DiaDiem extends javax.swing.JPanel {
              dd.getTenDiaDiem(),dd.getNgayThucHien(),dd.getTongChi()});
      }
     }
+    
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -44,43 +50,26 @@ public class DiaDiem extends javax.swing.JPanel {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jLabel1 = new javax.swing.JLabel();
-        jLabel2 = new javax.swing.JLabel();
-        jLabel3 = new javax.swing.JLabel();
-        txttendd = new javax.swing.JTextField();
-        txtngaythuchien = new javax.swing.JTextField();
-        txttongchi = new javax.swing.JTextField();
         btnthem = new javax.swing.JButton();
         btnxoa = new javax.swing.JButton();
-        btnsua = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
         tbldd = new javax.swing.JTable();
-
-        jLabel1.setText("Tên địa điểm");
-
-        jLabel2.setText("Ngày thực hiện");
-
-        jLabel3.setText("Tổng chi");
-
-        txttongchi.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                txttongchiActionPerformed(evt);
-            }
-        });
+        btntim = new javax.swing.JButton();
+        jLabel1 = new javax.swing.JLabel();
+        txttendd = new javax.swing.JTextField();
+        btnxuat = new javax.swing.JButton();
 
         btnthem.setText("Thêm");
+        btnthem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnthemActionPerformed(evt);
+            }
+        });
 
         btnxoa.setText("Xóa");
         btnxoa.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnxoaActionPerformed(evt);
-            }
-        });
-
-        btnsua.setText("Sửa");
-        btnsua.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnsuaActionPerformed(evt);
             }
         });
 
@@ -94,88 +83,143 @@ public class DiaDiem extends javax.swing.JPanel {
             new String [] {
                 "Tên địa điểm", "Ngày thực hiện", "Tổng chi"
             }
-        ));
+        ) {
+            boolean[] canEdit = new boolean [] {
+                false, false, true
+            };
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
+        tbldd.setPreferredSize(new java.awt.Dimension(450, 80));
+        tbldd.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                tblddMouseClicked(evt);
+            }
+        });
         jScrollPane1.setViewportView(tbldd);
+
+        btntim.setText("Tìm");
+
+        jLabel1.setText("Tên địa điểm");
+
+        txttendd.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                txttenddKeyReleased(evt);
+            }
+        });
+
+        btnxuat.setText("Xuất excel");
+        btnxuat.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnxuatActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(36, 36, 36)
+                .addGap(87, 87, 87)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(txtngaythuchien, javax.swing.GroupLayout.PREFERRED_SIZE, 93, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                .addGroup(layout.createSequentialGroup()
-                                    .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 85, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addGap(48, 48, 48)
-                                    .addComponent(txttendd, javax.swing.GroupLayout.PREFERRED_SIZE, 93, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 85, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                        .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 85, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addComponent(btnthem))
-                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                                        .addComponent(txttongchi, javax.swing.GroupLayout.PREFERRED_SIZE, 93, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addComponent(btnxoa)))))
-                        .addGap(66, 66, 66)
-                        .addComponent(btnsua)))
-                .addContainerGap(147, Short.MAX_VALUE))
+                        .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 79, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(28, 28, 28)
+                        .addComponent(txttendd, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(btntim))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(btnthem)
+                        .addGap(43, 43, 43)
+                        .addComponent(btnxoa)
+                        .addGap(48, 48, 48)
+                        .addComponent(btnxuat, javax.swing.GroupLayout.PREFERRED_SIZE, 93, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(164, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(40, 40, 40)
+                .addGap(27, 27, 27)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(btntim)
                     .addComponent(jLabel1)
                     .addComponent(txttendd, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(39, 39, 39)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel2)
-                    .addComponent(txtngaythuchien, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(37, 37, 37)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel3)
-                    .addComponent(txttongchi, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 403, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnthem)
-                    .addComponent(btnsua)
-                    .addComponent(btnxoa))
-                .addGap(39, 39, 39)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 403, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(119, Short.MAX_VALUE))
+                    .addComponent(btnxoa)
+                    .addComponent(btnxuat))
+                .addContainerGap(272, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
-    private void txttongchiActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txttongchiActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_txttongchiActionPerformed
-
-    private void btnsuaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnsuaActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_btnsuaActionPerformed
-
     private void btnxoaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnxoaActionPerformed
         // TODO add your handling code here:
+        int row=tbldd.getSelectedRow();
+        
+        if(row==-1){
+            JOptionPane.showMessageDialog(this, "Vui lòng chọn địa điểm cần xóa");
+            return;
+        }
+        DTO.DiaDiem dd=bus.timDiaDiem(model.getValueAt(row, 0).toString());
+        if(bus.xoaDiaDiem(dd)){
+            DefaultTableModel model=(DefaultTableModel) tbldd.getModel();
+            model.removeRow(row);
+        }
     }//GEN-LAST:event_btnxoaActionPerformed
+
+    private void btnthemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnthemActionPerformed
+        // TODO add your handling code here:
+        DiaDiemDialog ddd=new DiaDiemDialog();
+        ddd.setModal(true);
+        ddd.setVisible(true);
+        loadData();
+    }//GEN-LAST:event_btnthemActionPerformed
+
+    private void tblddMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblddMouseClicked
+        // TODO add your handling code here:
+        int row = tbldd.getSelectedRow();
+        
+    }//GEN-LAST:event_tblddMouseClicked
+
+    private void txttenddKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txttenddKeyReleased
+        // TODO add your handling code here:
+        String ten=txttendd.getText();
+        if(ten.trim().length()==0){
+            model.setRowCount(0);
+        }
+        else{
+            model.setRowCount(0);
+            
+            ArrayList<DTO.DiaDiem> ds =bus.timdd(ten);
+            
+            for(DTO.DiaDiem dd: ds){
+                model.addRow(new Object[]{
+                    dd.getTenDiaDiem(),dd.getNgayThucHien(),dd.getTongChi()
+                });
+            }
+        }
+    }//GEN-LAST:event_txttenddKeyReleased
+
+    private void btnxuatActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnxuatActionPerformed
+        // TODO add your handling code here:
+        Helper.ExcelHelper.xuatExcel(tbldd, this, "Danh sach hoa don");
+    }//GEN-LAST:event_btnxuatActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton btnsua;
     private javax.swing.JButton btnthem;
+    private javax.swing.JButton btntim;
     private javax.swing.JButton btnxoa;
+    private javax.swing.JButton btnxuat;
     private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel2;
-    private javax.swing.JLabel jLabel3;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTable tbldd;
-    private javax.swing.JTextField txtngaythuchien;
     private javax.swing.JTextField txttendd;
-    private javax.swing.JTextField txttongchi;
     // End of variables declaration//GEN-END:variables
 }
