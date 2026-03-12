@@ -3,6 +3,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Main.java to edit this template
  */
 package DTO;
+import java.time.LocalDate;
 import java.util.*;
 /**
  *
@@ -17,16 +18,26 @@ public class HoaDon {
     private String MaKHTour;
     private String MaKHDat;
     private String MaNV;
+    private LocalDate ngay;
     private int soluong;
     private float TongTien;
     
-    public HoaDon(String MaHD, String MaKHTour, String MaKHDat, String MaNV,int soluong, float TongTien) {
+    public HoaDon(String MaHD, String MaKHTour, String MaKHDat, String MaNV,LocalDate ngay,int soluong, float TongTien) {
         this.MaHD = MaHD;
         this.MaKHTour = MaKHTour;
         this.MaKHDat = MaKHDat;
         this.MaNV = MaNV;
+        this.ngay=ngay;
         this.soluong=soluong;
         this.TongTien = TongTien;
+    }
+
+    public void setNgay(LocalDate ngay) {
+        this.ngay = ngay;
+    }
+
+    public LocalDate getNgay() {
+        return ngay;
     }
 
     public static void setSc(Scanner sc) {

@@ -7,7 +7,7 @@ import DTO.CTietHD;
 import DTO.HoaDon;
 import java.sql.*;
 import java.util.*;
-import java.sql.*;
+import java.time.LocalDate;
 /**
  *
  * @author Nhat
@@ -55,13 +55,14 @@ public class DsHoaDon {
         int tongtien =rs.getInt("TongTien");
         String manv=rs.getString("MaNV");
         int soluong=rs.getInt("soluong");
-        return new HoaDon(mahd, makhtour, makhdi, manv,soluong, tongtien);
+        LocalDate ngay =LocalDate.parse(rs.getDate("ngay").toString());
+        return new HoaDon(mahd, makhtour, makhdi, manv,ngay,soluong, tongtien);
     }
     public boolean themHoaDon(HoaDon hd,ArrayList<CTietHD> listct){
         if(timHoaDon(hd.getMaHD())!=null){
             return false;
         }
-        String sqlhd="Insert into hoadon(mahd,makhtour,makhangdat,tongtien,manv,soluong) values(?,?,?,?,?,?)";
+        String sqlhd="Insert into hoadon(mahd,makhtour,makhangdat,tongtien,manv,soluong,ngay) values(?,?,?,?,?,?,?)";
         String sqlctiethd = "Insert into cthoadon(mahd,makhang,giave) values(?,?,?)";
         Connection conn=null;
         
@@ -75,6 +76,7 @@ public class DsHoaDon {
                 ps.setFloat(4, hd.getTongTien());
                 ps.setString(5, hd.getMaNV());
                 ps.setFloat(6,hd.getSoluong());
+                ps.setDate(7, java.sql.Date.valueOf(hd.getNgay()));
                 ps.executeUpdate();
             }
             try(PreparedStatement ps=conn.prepareStatement(sqlctiethd)){
@@ -154,7 +156,7 @@ public class DsHoaDon {
     }
     
     public boolean suaHd(HoaDon hd){
-        String sqlhd ="Update hoadon set makhtour=?,makhangdat=?,tongtien=?,manv=?,soluong=? where mahd=?";
+        String sqlhd ="Update hoadon set makhtour=?,makhangdat=?,tongtien=?,manv=?,soluong=?,ngay=? where mahd=?";
         
         try(Connection conn=KetNoiCSDL.getConnection();
                 PreparedStatement ps = conn.prepareStatement(sqlhd)){
@@ -163,7 +165,8 @@ public class DsHoaDon {
             ps.setFloat(3, hd.getTongTien());
             ps.setString(4, hd.getMaNV());
             ps.setInt(5, hd.getSoluong());
-            ps.setString(6, hd.getMaHD());
+            ps.setDate(6, java.sql.Date.valueOf(hd.getNgay()));
+            ps.setString(7, hd.getMaHD());
             return ps.executeUpdate()>0;
         }catch(SQLException e){
             e.printStackTrace();

@@ -6,6 +6,7 @@ package GUI.panel;
 
 import BUS.HoaDonBus;
 import java.awt.FlowLayout;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import javax.swing.JPanel;
 import javax.swing.JOptionPane;
@@ -36,7 +37,7 @@ public class HoaDon extends javax.swing.JPanel {
      if(ds==null) return;
      for(DTO.HoaDon hd: ds){
          model.addRow(new Object[]{
-             hd.getMaHD(),hd.getMaKHTour(),hd.getMaKHDat(),hd.getMaNV(),hd.getSoluong(),String.format("%.0f",hd.getTongTien())
+             hd.getMaHD(),hd.getMaKHTour(),hd.getMaKHDat(),hd.getMaNV(),Helper.DateHelper.toString(hd.getNgay()),hd.getSoluong(),String.format("%.0f",hd.getTongTien())
          });
      }
     }
@@ -48,7 +49,7 @@ public class HoaDon extends javax.swing.JPanel {
      if(ds==null) return;
      for(DTO.HoaDon hd: ds){
          model.addRow(new Object[]{
-             hd.getMaHD(),hd.getMaKHTour(),hd.getMaKHDat(),hd.getMaNV(),hd.getSoluong(),hd.getTongTien()
+             hd.getMaHD(),hd.getMaKHTour(),hd.getMaKHDat(),hd.getMaNV(),Helper.DateHelper.toString(hd.getNgay()),hd.getSoluong(),hd.getTongTien()
          });
      }
     }
@@ -114,11 +115,11 @@ public class HoaDon extends javax.swing.JPanel {
 
             },
             new String [] {
-                "Mã hóa đơn", "Mã kế hoạch tour", "Mã khách hàng đặt", "Mã nhân viên", "Số lượng", "Tổng tiền"
+                "Mã hóa đơn", "Mã kế hoạch tour", "Mã khách hàng đặt", "Mã nhân viên", "Ngày", "Số lượng", "Tổng tiền"
             }
         ) {
             boolean[] canEdit = new boolean [] {
-                false, false, false, false, false, false
+                false, false, false, false, true, false, false
             };
 
             public boolean isCellEditable(int rowIndex, int columnIndex) {
@@ -194,7 +195,7 @@ public class HoaDon extends javax.swing.JPanel {
                 int choice=JOptionPane.showOptionDialog(this, "Vui lòng chọn lựa chọn", "Tùy chọn", JOptionPane.DEFAULT_OPTION, JOptionPane.QUESTION_MESSAGE, null, option, option[1]);
                 
                 if(choice==0){
-                    DTO.HoaDon hd=new DTO.HoaDon(tblhoadon.getValueAt(row, 0).toString(), tblhoadon.getValueAt(row, 1).toString(), tblhoadon.getValueAt(row, 2).toString(), tblhoadon.getValueAt(row, 3).toString(), Integer.parseInt(tblhoadon.getValueAt(row, 4).toString()),Float.parseFloat(tblhoadon.getValueAt(row, 5).toString()));
+                    DTO.HoaDon hd=new DTO.HoaDon(tblhoadon.getValueAt(row, 0).toString(), tblhoadon.getValueAt(row, 1).toString(), tblhoadon.getValueAt(row, 2).toString(), tblhoadon.getValueAt(row, 3).toString(), LocalDate.parse(tblhoadon.getValueAt(row, 4).toString()),Integer.parseInt(tblhoadon.getValueAt(row, 5).toString()),Float.parseFloat(tblhoadon.getValueAt(row, 6).toString()));
                     GUI.dialog.HoaDonDialog hdd =new GUI.dialog.HoaDonDialog(hd);
                     hdd.setModal(true);
                     hdd.setVisible(true);

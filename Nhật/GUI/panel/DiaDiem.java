@@ -92,6 +92,11 @@ public class DiaDiem extends javax.swing.JPanel {
         jPanel2.add(txttendd);
 
         btntim.setText("Tìm");
+        btntim.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btntimActionPerformed(evt);
+            }
+        });
         jPanel2.add(btntim);
 
         jPanel1.add(jPanel2, java.awt.BorderLayout.PAGE_END);
@@ -200,6 +205,12 @@ public class DiaDiem extends javax.swing.JPanel {
         // TODO add your handling code here:
         loadData();
     }//GEN-LAST:event_jButton1ActionPerformed
+
+    private void btntimActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btntimActionPerformed
+        // TODO add your handling code here:
+
+        loadData(bus.timdd(txttendd.getText().trim()), txttendd.getText().trim());
+    }//GEN-LAST:event_btntimActionPerformed
 
   
 

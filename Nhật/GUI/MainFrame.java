@@ -49,7 +49,8 @@ public class MainFrame extends JFrame {
                 {"Kế Hoạch Tour", "KeHoachTour"},
                 {"Hóa đơn","HoaDon"},
                 {"Địa điểm", "DiaDiem"},
-                {"Chi tiết hóa đơn","CtHoaDon"}
+                {"Chi tiết hóa đơn","CtHoaDon"},
+                {"Thống kê","Thongke"}
         };
 
         for(String[] m : menus){
@@ -74,6 +75,7 @@ public class MainFrame extends JFrame {
         contentArea.add(new GUI.panel.HoaDon(),"HoaDon");
         contentArea.add(new GUI.panel.DiaDiem(),"DiaDiem");
         contentArea.add(new GUI.panel.CTHoaDon(),"CtHoaDon");
+        contentArea.add(new GUI.panel.StatisticsPanel(),"Thongke");
         return contentArea;
     }
 

@@ -30,8 +30,8 @@ public class KeHoachTourDAO {
                         rs.getInt(4),
                         rs.getLong(5),
                         rs.getLong(6),
-                        rs.getString(7),
-                        rs.getString(8)
+                        rs.getString("matour"),
+                        rs.getString("manvhd")
                 );
                 lsKeHoachTour.add(t);
             }
