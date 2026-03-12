@@ -1,9 +1,7 @@
 package BUS;
 
-import DAO.*;
-import DTO.*;
-
-import javax.swing.*;
+import DAO.TourDAO;
+import DTO.TourDTO;
 import java.util.ArrayList;
 
 public class TourBUS {

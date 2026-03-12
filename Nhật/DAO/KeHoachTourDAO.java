@@ -1,18 +1,12 @@
 package DAO;
 
-import DTO.*;
-
-import javax.swing.*;
+import DTO.KeHoachTourDTO;
 import java.sql.*;
 import java.util.ArrayList;
 
 public class KeHoachTourDAO {
     Connection c = KetNoiCSDL.getConnection();
     Statement st = null;
-
-    public KeHoachTourDAO(){
-        ArrayList<KeHoachTourDTO> lsKeHoachTour;
-    }
 
     //get all ke hoach tours
     public ArrayList<KeHoachTourDTO> getAllKeHoachTours(){
@@ -30,8 +24,8 @@ public class KeHoachTourDAO {
                         rs.getInt(4),
                         rs.getLong(5),
                         rs.getLong(6),
-                        rs.getString("matour"),
-                        rs.getString("manvhd")
+                        rs.getString(7),
+                        rs.getString(8)
                 );
                 lsKeHoachTour.add(t);
             }

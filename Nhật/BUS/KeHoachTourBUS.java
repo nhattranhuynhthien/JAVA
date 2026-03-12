@@ -1,23 +1,23 @@
 package BUS;
 
-import DAO.*;
-import DTO.*;
+import DAO.KeHoachTourDAO;
+import DTO.KeHoachTourDTO;
 
 import javax.swing.*;
 import java.util.ArrayList;
 
 public class KeHoachTourBUS {
-    private ArrayList<KeHoachTourDTO> lsKeHoachTour;
-    KeHoachTourDAO keHoachTourDAO;
+    static ArrayList<KeHoachTourDTO> lsKeHoachTour;
+    static KeHoachTourDAO keHoachTourDAO = new KeHoachTourDAO();
 
     public KeHoachTourBUS(){
-        lsKeHoachTour = new ArrayList<>();
-        keHoachTourDAO = new KeHoachTourDAO();
-    }
+        }
 
-    public ArrayList<KeHoachTourDTO> getAllKeHoachTours(){
+    public void getAllKeHoachTours(){
+        if(lsKeHoachTour == null){
+            lsKeHoachTour = new ArrayList<KeHoachTourDTO>();
+        }
         lsKeHoachTour = keHoachTourDAO.getAllKeHoachTours();
-        return lsKeHoachTour;
     }
 
     public ArrayList<KeHoachTourDTO> getAllKeHoachToursByID(String maTour){

@@ -4,26 +4,30 @@
  */
 package DAO;
 
-import java.sql.*;
-
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
 /**
  *
- * @author Nhat
+ * @author Admin
  */
 public class KetNoiCSDL {
     public static Connection getConnection(){
-        Connection conn =null;
+        Connection conn=null;
         try{
             Class.forName("com.mysql.cj.jdbc.Driver");
-            String url = "jdbc:mysql://localhost:3306/qltourdulich";
-            String user ="root";
-            String password ="";
+            
+            String url="jdbc:mysql://localhost:3306/qltourdulich";
+            String user="root";
+            String password="";
             
             conn=DriverManager.getConnection(url,user,password);
-        }catch(ClassNotFoundException e){
-            e.printStackTrace();
-        }catch(SQLException e){
-            e.printStackTrace();
+            System.out.println("Ket noi thanh cong");
+            
+        } catch(ClassNotFoundException e){
+            System.out.println("Loi : khong tim thay thu vien MySQL JDBC");
+        } catch(SQLException e){
+            System.out.println("Loi khong the ket noi");
         }
         return conn;
     }
