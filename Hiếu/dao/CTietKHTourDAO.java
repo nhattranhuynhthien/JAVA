@@ -1,29 +1,28 @@
 package org.example.dao;
 
-import org.example.dto.CTietKHTourDTO;
+import org.example.dto._CTietKHTourDTO;
 
-import javax.swing.*;
 import java.sql.*;
 import java.util.ArrayList;
 
-public class CTietKHTourDAO {
-    Connection c = MyConnection.getConnection();
+public class _CTietKHTourDAO {
+    Connection c = _MyConnection.getConnection();
     Statement st = null;
 
-    public CTietKHTourDAO(){
-        ArrayList<CTietKHTourDAO> lsCTietKHTours = new ArrayList<>();
+    public _CTietKHTourDAO(){
+        ArrayList<_CTietKHTourDAO> lsCTietKHTours = new ArrayList<>();
     }
 
     //get all tours
-    public ArrayList<CTietKHTourDTO> getAllCTietKHTours(){
-        ArrayList<CTietKHTourDTO> lsCTietKHTours = new ArrayList<>();
+    public ArrayList<_CTietKHTourDTO> getAllCTietKHTours(){
+        ArrayList<_CTietKHTourDTO> lsCTietKHTours = new ArrayList<>();
         try {
             String sql = "select * from ctietkhtour";
             PreparedStatement ps = c.prepareStatement(sql);
             ResultSet rs = ps.executeQuery();
 
             while(rs.next()){
-                CTietKHTourDTO t = new CTietKHTourDTO(
+                _CTietKHTourDTO t = new _CTietKHTourDTO(
                         rs.getString(1),
                         rs.getString(2),
                         rs.getLong(3),
@@ -44,7 +43,7 @@ public class CTietKHTourDAO {
     }
 
     //add
-    public boolean addCTietKHTour(CTietKHTourDTO t){
+    public boolean addCTietKHTour(_CTietKHTourDTO t){
         try{
             String sql = "Insert into ctietkhtour values(";
             sql += "'" +  t.getMaCTietKHTour() + "'";
@@ -79,7 +78,7 @@ public class CTietKHTourDAO {
     }
 
     //edit
-    public void editCTietKHTour(CTietKHTourDTO t){
+    public boolean editCTietKHTour(_CTietKHTourDTO t){
         String id = t.getMaCTietKHTour();
 
         try{
@@ -95,10 +94,10 @@ public class CTietKHTourDAO {
             qry += "where mactietkhtour = '" + id + "';";
             st = c.createStatement();
             st.executeUpdate(qry);
+            return true;
         }catch (SQLException e){
             e.printStackTrace();
-            JOptionPane.showMessageDialog(null, "Lỗi cập nhật chi tiết tour!");
+            return false;
         }
     }
-
 }
