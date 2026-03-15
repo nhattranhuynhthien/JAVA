@@ -1,24 +1,24 @@
 package org.example.gui.dialog;
 
-import org.example.bus.CTietKHTourBUS;
-import org.example.dto.CTietKHTourDTO;
+import org.example.bus._CTietKHTourBUS;
+import org.example.dto._CTietKHTourDTO;
 
 import javax.swing.*;
 import java.awt.*;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
-public class CTietKHTourDialog extends JDialog {
+public class _CTietKHTourDialog extends JDialog {
     private JLabel jlbMaCTietKHTour, jlbNgayThucHien, jlbTongChi, jlbTienO, jlbTienAn, jlbTienDiLai, jlbDiemDi, jlbDiemDen, jlbMaKHtour;
     private JTextField txtMaCTietKHTour, txtNgayThucHien, txtTongChi, txtTienO, txtTienAn, txtTienDiLai, txtDiemDi, txtDiemDen, txtMaKHtour;
     private JButton saveBtn, cancelBtn;
-    private CTietKHTourBUS cTietKHTourBUS;
-    private CTietKHTourDTO cTietKHTourDTO;
+    private _CTietKHTourBUS cTietKHTourBUS;
+    private _CTietKHTourDTO cTietKHTourDTO;
     private String maKHTour;
     private DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
     private LocalDate today;
 
-    public CTietKHTourDialog(CTietKHTourBUS cTietKHTourBUS, CTietKHTourDTO cTietKHTourDTO, String maKHTour){
+    public _CTietKHTourDialog(_CTietKHTourBUS cTietKHTourBUS, _CTietKHTourDTO cTietKHTourDTO, String maKHTour){
         this.cTietKHTourBUS = cTietKHTourBUS;
         this.cTietKHTourDTO = cTietKHTourDTO;
         this.maKHTour = maKHTour;
@@ -165,7 +165,7 @@ public class CTietKHTourDialog extends JDialog {
                     JOptionPane.showMessageDialog(null, "Mã chi tiết kế hoạch tour đã tồn tại, vui lòng nhập mã khác!");
 
                 else{
-                    CTietKHTourDTO cTietkHTourMoi = new CTietKHTourDTO(
+                    _CTietKHTourDTO cTietkHTourMoi = new _CTietKHTourDTO(
                             txtMaCTietKHTour.getText(), txtNgayThucHien.getText(),
                             tongChi, tienO, tienAn,
                             tienDiLai, txtDiemDi.getText(), txtDiemDen.getText(), txtMaKHtour.getText()
@@ -210,5 +210,4 @@ public class CTietKHTourDialog extends JDialog {
         }
         return false;
     }
-
 }
