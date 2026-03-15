@@ -1,28 +1,29 @@
 package org.example.gui.dialog;
 
-import org.example.bus.CTietKHTourBUS;
-import org.example.dto.CTietKHTourDTO;
-import org.example.dto.KeHoachTourDTO;
+import org.example.bus._CTietKHTourBUS;
+import org.example.dto._CTietKHTourDTO;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.util.ArrayList;
 
-public class KeHoachTourDetailDialog extends JDialog {
+public class _KeHoachTourDetailDialog extends JDialog {
     private String maKHTour;
-    private CTietKHTourBUS cTietKHTourBUS;
+    
+    // relate to table 
     private DefaultTableModel tableModel;
     private JTable table;
     private JScrollPane scrollPane;
+    
+    // define btn 
     private JButton addBtn, deleteBtn, editBtn, refreshBtn;
-    private JComboBox<KeHoachTourDTO> cbKeHoachTour;
+    
+    private _CTietKHTourBUS cTietKHTourBUS;
 
-
-    public KeHoachTourDetailDialog(String maKHTour){
+    public _KeHoachTourDetailDialog(String maKHTour){
         this.maKHTour = maKHTour;
-        this.cTietKHTourBUS = new CTietKHTourBUS();
-        cbKeHoachTour = new JComboBox<>();
+        this.cTietKHTourBUS = new _CTietKHTourBUS();
 
         setTitle("Chi tiết kế hoạch: " + maKHTour);
         setSize(1000, 500);
@@ -66,9 +67,9 @@ public class KeHoachTourDetailDialog extends JDialog {
 
     private void loadTable(String maKHTour){
         tableModel.setRowCount(0);
-        ArrayList<CTietKHTourDTO> lsCTKeHoachTours = cTietKHTourBUS.getLsCTietKHToursById(maKHTour);
+        ArrayList<_CTietKHTourDTO> lsCTKeHoachTours = cTietKHTourBUS.getLsCTietKHToursById(maKHTour);
 
-        for (CTietKHTourDTO ct : lsCTKeHoachTours){
+        for (_CTietKHTourDTO ct : lsCTKeHoachTours){
             tableModel.addRow(new Object[]{
                     ct.getMaCTietKHTour(),
                     ct.getNgayThucHien(),
@@ -103,8 +104,8 @@ public class KeHoachTourDetailDialog extends JDialog {
         addBtn.addActionListener(e -> openDiaLog(null)); // null là ở chế độ thêm, có đối tượng DTO là ở dạng sửa
     }
 
-    private void openDiaLog(CTietKHTourDTO cTietKHTourDTO){
-        CTietKHTourDialog dialog = new CTietKHTourDialog(cTietKHTourBUS, cTietKHTourDTO, maKHTour);
+    private void openDiaLog(_CTietKHTourDTO cTietKHTourDTO){
+        _CTietKHTourDialog dialog = new _CTietKHTourDialog(cTietKHTourBUS, cTietKHTourDTO, maKHTour);
         dialog.setVisible(true);
         loadTable(maKHTour);
     }
@@ -145,7 +146,7 @@ public class KeHoachTourDetailDialog extends JDialog {
                 return;
             }
             String maCTKHTour = tableModel.getValueAt(row, 0).toString();
-            CTietKHTourDTO ct = cTietKHTourBUS.getCTietKHTourById(maCTKHTour);
+            _CTietKHTourDTO ct = cTietKHTourBUS.getCTietKHTourById(maCTKHTour);
             openDiaLog(ct);
         });
     }
