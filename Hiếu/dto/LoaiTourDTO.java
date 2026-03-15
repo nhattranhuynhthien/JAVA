@@ -1,15 +1,15 @@
 package org.example.dto;
 
-public class LoaiTourDTO {
+public class _LoaiTourDTO {
     private String maLoaiTour;
     private String theLoai;
 
-    public LoaiTourDTO(){
+    public _LoaiTourDTO(){
         this.maLoaiTour = "";
         this.theLoai = "";
     }
 
-    public LoaiTourDTO(String maLoaiTour, String theLoai) {
+    public _LoaiTourDTO(String maLoaiTour, String theLoai) {
         this.maLoaiTour = maLoaiTour;
         this.theLoai = theLoai;
     }
