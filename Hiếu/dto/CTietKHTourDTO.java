@@ -1,6 +1,6 @@
 package org.example.dto;
 
-public class CTietKHTourDTO {
+public class _CTietKHTourDTO {
     private String maCTietKHTour;
     private String ngayThucHien;
     private long tongChi;
@@ -11,7 +11,7 @@ public class CTietKHTourDTO {
     private String diemDen;
     private String maKHTour;
 
-    public CTietKHTourDTO() {
+    public _CTietKHTourDTO() {
         this.maCTietKHTour = "";
         this.ngayThucHien = "";
         this.tongChi = 0;
@@ -23,7 +23,7 @@ public class CTietKHTourDTO {
         this.maKHTour =  "";
     }
 
-    public CTietKHTourDTO(String maCTietKHTour, String ngayThucHien, long tongChi, long tienO, long tienAn, long tienDiLai, String diemDi, String diemDen, String maKHTour) {
+    public _CTietKHTourDTO(String maCTietKHTour, String ngayThucHien, long tongChi, long tienO, long tienAn, long tienDiLai, String diemDi, String diemDen, String maKHTour) {
         this.maCTietKHTour = maCTietKHTour;
         this.ngayThucHien = ngayThucHien;
         this.tongChi = tongChi;
