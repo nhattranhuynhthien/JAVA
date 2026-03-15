@@ -1,26 +1,42 @@
 
 package org.example.gui.panel;
 
-import org.example.bus.TourBUS;
-import org.example.dto.TourDTO;
-import org.example.gui.dialog.TourDiaLog;
+import org.example.bus._TourBUS;
+import org.example.dto._TourDTO;
+import org.example.gui.dialog._TourDetailDialog;
+import org.example.gui.dialog._TourDiaLog;
 
 import javax.swing.*;
+import javax.swing.border.TitledBorder;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableRowSorter;
 import java.awt.*;
 import java.util.ArrayList;
 
-public class TourPanel extends JPanel {
+public class _TourPanel extends JPanel {
+    // text field
     private JTextField txtSearch;
-    private JPanel northPanel, southPanel;
-    private JButton addBtn, deleteBtn, editBtn, searchBtn, refreshBtn;
-    private DefaultTableModel tableModel;
+
+    // define panel
+    private JPanel northPanel, southPanel, searchPanel;
+
+    // define button
+
+    private JButton addBtn, deleteBtn, editBtn, refreshBtn, detailBtn;
+
+    // relate to table
     private JTable table;
     private JScrollPane scrollPane;
-    private TourBUS tourBUS;
+    private DefaultTableModel tableModel;
+    private TableRowSorter<DefaultTableModel> rowSorter;
 
-    public TourPanel(){
-        tourBUS = new TourBUS();
+    // comboBox
+    private JComboBox<String> cmbSearchType;
+
+    private _TourBUS tourBUS;
+
+    public _TourPanel(){
+        tourBUS = new _TourBUS();
         init();
         loadTable();
         hasSelectedRow();
@@ -35,15 +51,46 @@ public class TourPanel extends JPanel {
         jlbTitle.setFont(new Font("Arial", Font.BOLD, 18));
         northPanel.add(jlbTitle, BorderLayout.NORTH); // northPanel add components
 
-        // Search panel
-        JPanel searchPanel = new JPanel();
+        // Search panel (define)
+        searchPanel = new JPanel(new GridBagLayout());
+        searchPanel.setBackground(Color.WHITE);
 
-        txtSearch = new JTextField(20);
-        searchPanel.add(new JLabel("Tìm kiếm tour:"));
-        searchPanel.add(txtSearch);
+        // titleBorder
+        TitledBorder titleSearch = BorderFactory.createTitledBorder(
+                BorderFactory.createLineBorder(Color.CYAN, 2), " TÌM KIẾM TOUR "
+        );
+        titleSearch.setTitleFont(new Font("Arial", Font.BOLD, 14));
+        titleSearch.setTitleColor(new Color(0, 102, 204));
+        searchPanel.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createEmptyBorder(20, 10, 20, 10),
+                titleSearch)
+        );
 
-        search(); // search button
-        searchPanel.add(searchBtn);
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.insets = new Insets(10, 10, 10, 10); // Khoảng cách giữa các ô
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+
+        // column 1 : type label
+        gbc.gridx = 0; gbc.gridy = 0;
+        searchPanel.add(new JLabel("Loại:"), gbc);
+
+        // column 2 : cmbSearch By Type
+        cmbSearchType = new JComboBox<>(new String[]{
+                " Tất cả", " Tên Tour", " Địa điểm khởi hành"
+        });
+        cmbSearchType.setFont(new Font("Arial", Font.PLAIN, 14));
+        gbc.gridx = 1;
+        searchPanel.add(cmbSearchType, gbc);
+
+        // column 3 : keyWord label
+        gbc.gridx = 2;
+        searchPanel.add(new JLabel("Từ khóa:"), gbc);
+
+        // column 4 : keyWord txtField
+        txtSearch = new JTextField(15);
+        txtSearch.addCaretListener(e -> searchByType());
+        gbc.gridx = 3; gbc.weightx = 1.0;
+        searchPanel.add(txtSearch, gbc);
 
         northPanel.add(searchPanel, BorderLayout.CENTER);
 
@@ -57,6 +104,8 @@ public class TourPanel extends JPanel {
         southPanel.add(deleteBtn);
         edit();
         southPanel.add(editBtn);
+        viewDetail();
+        southPanel.add(detailBtn);
         refresh();
         southPanel.add(refreshBtn);
 
@@ -66,12 +115,19 @@ public class TourPanel extends JPanel {
     }
 
     private void initTable(){
+        // columns of table
         String[] columns = {"Mã tour", "Tên", "Số ngày", "Đơn giá", "Số chỗ", "Địa điểm khởi hành", "Mã loại tour"};
+
         tableModel = new DefaultTableModel(columns, 0);
         table = new JTable(tableModel);
+
         table.setDefaultEditor(Object.class, null);
 
+        rowSorter = new TableRowSorter<>(tableModel);
+        table.setRowSorter(rowSorter);
+
         scrollPane = new JScrollPane(table);
+        scrollPane.setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 10));
     }
 
     private JButton createBtn(String text, Color color){
@@ -89,16 +145,38 @@ public class TourPanel extends JPanel {
         return btn;
     }
 
-    private void search(){
-        searchBtn = createBtn("Tìm", Color.CYAN);
-        searchBtn.addActionListener(e -> {
-            // Tìm kiếm theo thể tên tour
-            String keyWord = txtSearch.getText().trim().toLowerCase();
-            ArrayList<TourDTO> lsTour = tourBUS.search(keyWord);
+    private void searchByType(){
+        String keyWord = txtSearch.getText().trim().toLowerCase();
+        String searchType = (String) cmbSearchType.getSelectedItem();
 
-            tableModel.setRowCount(0);
-            loadTableByName(lsTour);
-        });
+        RowFilter<DefaultTableModel, Object> rf = new RowFilter<DefaultTableModel, Object>() {
+            @Override
+            public boolean include(Entry<? extends DefaultTableModel, ? extends Object> entry) {
+                if(!keyWord.isEmpty()){
+                    boolean found = false;
+
+                    switch (searchType) {
+                        case " Tên Tour":
+                            found = entry.getStringValue(1).toLowerCase().contains(keyWord);
+                            break;
+                        case " Địa điểm khởi hành":
+                            found = entry.getStringValue(5).toLowerCase().contains(keyWord);
+                            break;
+                        default: // Tất cả
+                            for (int i = 0; i < entry.getValueCount(); i++) {
+                                if (entry.getStringValue(i).toLowerCase().contains(keyWord)) {
+                                    found = true;
+                                    break;
+                                }
+                            }
+                    }
+                    if(!found) return false;
+                }
+
+                return true;
+            }
+        };
+        rowSorter.setRowFilter(rf);
     }
 
     private void add(){
@@ -106,8 +184,8 @@ public class TourPanel extends JPanel {
         addBtn.addActionListener(e -> openDiaLog(null));
     }
 
-    private void openDiaLog(TourDTO tourDTO){
-        TourDiaLog tourDiaLog = new TourDiaLog(tourBUS, tourDTO);
+    private void openDiaLog(_TourDTO tourDTO){
+        _TourDiaLog tourDiaLog = new _TourDiaLog(tourBUS, tourDTO);
         tourDiaLog.setVisible(true);
         loadTable();
     }
@@ -145,8 +223,25 @@ public class TourPanel extends JPanel {
                 return;
             }
             String maTour = tableModel.getValueAt(row, 0).toString();
-            TourDTO t = tourBUS.getByID(maTour);
+            _TourDTO t = tourBUS.getByID(maTour);
             openDiaLog(t);
+        });
+    }
+
+    private void viewDetail(){
+        detailBtn = createBtn("Xem chi tiết", Color.BLUE);
+        detailBtn.setEnabled(false);
+        detailBtn.addActionListener(e -> {
+            int row = table.getSelectedRow();
+            if (row == -1) {
+                JOptionPane.showMessageDialog(this, "Vui lòng chọn kế tour để xem");
+                return;
+            }
+
+            String maTour = tableModel.getValueAt(row, 0).toString();
+            _TourDTO t = tourBUS.getByID(maTour);
+            _TourDetailDialog dialog = new _TourDetailDialog(t);
+            dialog.setVisible(true);
         });
     }
 
@@ -154,7 +249,7 @@ public class TourPanel extends JPanel {
         refreshBtn = createBtn("Làm mới", Color.BLUE);
         refreshBtn.addActionListener(e -> {
             String keyWord = txtSearch.getText().trim().toLowerCase();
-            ArrayList<TourDTO> lsTour = tourBUS.search(keyWord);
+            ArrayList<_TourDTO> lsTour = tourBUS.search(keyWord);
             loadTableByName(lsTour);
         });
     }
@@ -162,7 +257,7 @@ public class TourPanel extends JPanel {
     public void loadTable(){
         tableModel.setRowCount(0);
 
-        for(TourDTO t : tourBUS.getAllTours()){
+        for(_TourDTO t : tourBUS.getAllTours()){
             tableModel.addRow(new Object[]{
                     t.getMaTour(),
                     t.getTen(),
@@ -175,10 +270,10 @@ public class TourPanel extends JPanel {
         }
     }
 
-    private void loadTableByName(ArrayList<TourDTO> list){
+    private void loadTableByName(ArrayList<_TourDTO> list){
         tableModel.setRowCount(0);
 
-        for(TourDTO t : list) {
+        for(_TourDTO t : list) {
             tableModel.addRow(new Object[]{
                     t.getMaTour(),
                     t.getTen(),
@@ -196,6 +291,7 @@ public class TourPanel extends JPanel {
             boolean hadSelection = table.getSelectedRow() != -1;
             deleteBtn.setEnabled(hadSelection);
             editBtn.setEnabled(hadSelection);
+            detailBtn.setEnabled(hadSelection);
         });
     }
 }
