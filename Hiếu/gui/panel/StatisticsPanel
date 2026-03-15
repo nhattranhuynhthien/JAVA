@@ -1,7 +1,7 @@
 package org.example.gui.panel;
 
 import com.toedter.calendar.JDateChooser;
-import org.example.bus.TourBUS;
+import org.example.bus._TourBUS;
 
 import javax.swing.*;
 import java.awt.*;
@@ -9,19 +9,20 @@ import java.time.LocalDate;
 
 import static java.sql.Date.valueOf;
 
-public class StatisticsPanel extends JPanel {
+
+public class _StatisticsPanel extends JPanel {
     private JDateChooser dateFrom;
     private JDateChooser dateTo;
 
     //define BUSs => Take statistic
-    private TourBUS tourBUS;
+    private _TourBUS tourBUS;
 
     private JPanel cardsPanel;
     private JPanel chartsPanel;
     private JButton btnFilter;
 
-    public StatisticsPanel(){
-        tourBUS = new TourBUS();
+    public _StatisticsPanel(){
+        tourBUS = new _TourBUS();
         setLayout(new BorderLayout());
         init();
     }
