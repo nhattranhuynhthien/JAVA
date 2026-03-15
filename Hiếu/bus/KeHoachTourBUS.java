@@ -1,30 +1,30 @@
 package org.example.bus;
 
-import org.example.dao.KeHoachTourDAO;
-import org.example.dto.KeHoachTourDTO;
+import org.example.dao._KeHoachTourDAO;
+import org.example.dto._KeHoachTourDTO;
 
 import javax.swing.*;
 import java.util.ArrayList;
 
-public class KeHoachTourBUS {
-    private ArrayList<KeHoachTourDTO> lsKeHoachTour;
-    KeHoachTourDAO keHoachTourDAO;
+public class _KeHoachTourBUS {
+    private ArrayList<_KeHoachTourDTO> lsKeHoachTour;
+    _KeHoachTourDAO keHoachTourDAO;
 
-    public KeHoachTourBUS(){
+    public _KeHoachTourBUS(){
         lsKeHoachTour = new ArrayList<>();
-        keHoachTourDAO = new KeHoachTourDAO();
+        keHoachTourDAO = new _KeHoachTourDAO();
     }
 
-    public ArrayList<KeHoachTourDTO> getAllKeHoachTours(){
+    public ArrayList<_KeHoachTourDTO> getAllKeHoachTours(){
         lsKeHoachTour = keHoachTourDAO.getAllKeHoachTours();
         return lsKeHoachTour;
     }
 
-    public ArrayList<KeHoachTourDTO> getAllKeHoachToursByID(String maTour){
+    public ArrayList<_KeHoachTourDTO> getAllKeHoachToursByID(String maTour){
         lsKeHoachTour = keHoachTourDAO.getAllKeHoachTours();
-        ArrayList<KeHoachTourDTO> lsKeHoachToursID = new ArrayList<>();
+        ArrayList<_KeHoachTourDTO> lsKeHoachToursID = new ArrayList<>();
 
-        for(KeHoachTourDTO kt : lsKeHoachTour){
+        for(_KeHoachTourDTO kt : lsKeHoachTour){
             if(kt.getMaTour().trim().equalsIgnoreCase(maTour)){
                 lsKeHoachToursID.add(kt);
             }
@@ -32,7 +32,7 @@ public class KeHoachTourBUS {
         return lsKeHoachToursID;
     }
 
-    public boolean addKeHoachTour(KeHoachTourDTO t){
+    public boolean addKeHoachTour(_KeHoachTourDTO t){
         if(t == null) return false;
         if(t.getNgayKhoiHanh() == null || t.getNgayKetThuc() == null) {
             JOptionPane.showMessageDialog(null, "Ngày không được để trống");
@@ -50,7 +50,7 @@ public class KeHoachTourBUS {
         return success;
     }
 
-    public String validateKeHoachTour(KeHoachTourDTO t){
+    public String validateKeHoachTour(_KeHoachTourDTO t){
         if(t == null) return "Dữ liệu không hợp lệ";
 
         if(t.getNgayKhoiHanh() == null || t.getNgayKetThuc() == null)
@@ -71,7 +71,7 @@ public class KeHoachTourBUS {
         return null;
     }
 
-    public boolean editKeHoachTour(KeHoachTourDTO t){
+    public boolean editKeHoachTour(_KeHoachTourDTO t){
         return keHoachTourDAO.editKeHoachTour(t);
     }
 
@@ -80,9 +80,9 @@ public class KeHoachTourBUS {
         return success;
     }
 
-    public KeHoachTourDTO getById(String maKHTour){
-        KeHoachTourDTO result = new KeHoachTourDTO();
-        for (KeHoachTourDTO kt : lsKeHoachTour){
+    public _KeHoachTourDTO getById(String maKHTour){
+        _KeHoachTourDTO result = new _KeHoachTourDTO();
+        for (_KeHoachTourDTO kt : lsKeHoachTour){
             if(kt.getMaKHTour().trim().equalsIgnoreCase(maKHTour)) {
                 result = kt;
                 break;
@@ -92,7 +92,7 @@ public class KeHoachTourBUS {
     }
 
     public boolean existedKeHoachTourWithID(String maKHTour){
-        for (KeHoachTourDTO kt : lsKeHoachTour){
+        for (_KeHoachTourDTO kt : lsKeHoachTour){
             if(kt.getMaTour().trim().equalsIgnoreCase(maKHTour))
                 return true;
         }
