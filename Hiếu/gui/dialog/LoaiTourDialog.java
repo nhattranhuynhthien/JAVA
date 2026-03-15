@@ -1,19 +1,23 @@
 package org.example.gui.dialog;
 
-import org.example.bus.LoaiTourBUS;
-import org.example.dto.LoaiTourDTO;
+import org.example.bus._LoaiTourBUS;
+import org.example.dto._LoaiTourDTO;
 
 import javax.swing.*;
 import java.awt.*;
 
-public class LoaiTourDialog extends JDialog{
+public class _LoaiTourDialog extends JDialog{
+    // define label and txt
     private JLabel jlbMaLoaiTour, jlbTheLoai;
     private JTextField txtMaLoaiTour, txtTheLoai;
-    private JButton saveBtn, cancelBtn;
-    private LoaiTourDTO loaiTourDTO;
-    private LoaiTourBUS loaiTourBUS;
 
-    public LoaiTourDialog(LoaiTourBUS loaiTourBUS, LoaiTourDTO loaiTourDTO){
+    // define btn
+    private JButton saveBtn, cancelBtn;
+
+    private _LoaiTourDTO loaiTourDTO;
+    private _LoaiTourBUS loaiTourBUS;
+
+    public _LoaiTourDialog(_LoaiTourBUS loaiTourBUS, _LoaiTourDTO loaiTourDTO){
         this.loaiTourBUS = loaiTourBUS;
         this.loaiTourDTO = loaiTourDTO;
 
@@ -89,7 +93,7 @@ public class LoaiTourDialog extends JDialog{
                 if(loaiTourBUS.existedLoaiTourWithID(txtMaLoaiTour.getText()))
                     JOptionPane.showMessageDialog(null, "Mã loại tour đã tồn tại, vui lòng nhập mã khác!");
                 else {
-                    LoaiTourDTO loaiMoi = new LoaiTourDTO(txtMaLoaiTour.getText(), txtTheLoai.getText());
+                    _LoaiTourDTO loaiMoi = new _LoaiTourDTO(txtMaLoaiTour.getText(), txtTheLoai.getText());
                     loaiTourBUS.addLoaiTour(loaiMoi);
                     dispose();
                     JOptionPane.showMessageDialog(null, "Đã thêm");
