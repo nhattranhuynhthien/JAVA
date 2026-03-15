@@ -1,26 +1,25 @@
 package org.example.bus;
 
-import org.example.dao.CTietKHTourDAO;
-import org.example.dto.CTietKHTourDTO;
+import org.example.dao._CTietKHTourDAO;
+import org.example.dto._CTietKHTourDTO;
 
-import javax.swing.*;
 import java.util.ArrayList;
 
-public class CTietKHTourBUS {
-    private ArrayList<CTietKHTourDTO> lsCTietKHTours;
-    private CTietKHTourDAO cTietKHTourDAO;
+public class _CTietKHTourBUS {
+    private ArrayList<_CTietKHTourDTO> lsCTietKHTours;
+    private _CTietKHTourDAO cTietKHTourDAO;
 
     //constructor
-    public CTietKHTourBUS(){
-        cTietKHTourDAO = new CTietKHTourDAO();
+    public _CTietKHTourBUS(){
+        cTietKHTourDAO = new _CTietKHTourDAO();
         lsCTietKHTours = new ArrayList<>();
     }
 
-    public ArrayList<CTietKHTourDTO> getAllCTietKHTours(){
+    public ArrayList<_CTietKHTourDTO> getAllCTietKHTours(){
         lsCTietKHTours = cTietKHTourDAO.getAllCTietKHTours();
         return lsCTietKHTours;
     }
-    public boolean addCTietKHTour(CTietKHTourDTO t){
+    public boolean addCTietKHTour(_CTietKHTourDTO t){
         if(t == null) return false;
 
         boolean success = cTietKHTourDAO.addCTietKHTour(t);
@@ -29,7 +28,7 @@ public class CTietKHTourBUS {
         return success;
     }
 
-    public boolean editCTietKHTour(CTietKHTourDTO t){
+    public boolean editCTietKHTour(_CTietKHTourDTO t){
         return cTietKHTourDAO.editCTietKHTour(t);
     }
 
@@ -37,9 +36,9 @@ public class CTietKHTourBUS {
         return cTietKHTourDAO.removeCTietKHTour(maCTietKHTour);
     }
 
-    public CTietKHTourDTO getCTietKHTourById(String maCTietKHTour){
-        CTietKHTourDTO result = null;
-        for (CTietKHTourDTO ct : lsCTietKHTours){
+    public _CTietKHTourDTO getCTietKHTourById(String maCTietKHTour){
+        _CTietKHTourDTO result = null;
+        for (_CTietKHTourDTO ct : lsCTietKHTours){
             if(ct.getMaKHTour().trim().equalsIgnoreCase(maCTietKHTour)) {
                 result = ct;
                 break;
@@ -49,11 +48,11 @@ public class CTietKHTourBUS {
     }
 
     // get CTietKeHTour equal with maKHTour
-    public ArrayList<CTietKHTourDTO> getLsCTietKHToursById(String maKHTour){
-        ArrayList<CTietKHTourDTO> result = new ArrayList<>(); // result CTietKHTours
-        ArrayList<CTietKHTourDTO> list = getAllCTietKHTours(); // list CTietKHTours
+    public ArrayList<_CTietKHTourDTO> getLsCTietKHToursById(String maKHTour){
+        ArrayList<_CTietKHTourDTO> result = new ArrayList<>(); // result CTietKHTours
+        ArrayList<_CTietKHTourDTO> list = getAllCTietKHTours(); // list CTietKHTours
 
-        for (CTietKHTourDTO ct : list){
+        for (_CTietKHTourDTO ct : list){
             if(ct.getMaKHTour().trim().equalsIgnoreCase(maKHTour)) {
                 result.add(ct);
             }
@@ -62,9 +61,9 @@ public class CTietKHTourBUS {
     }
 
     public boolean existedCTietKHTourWithID(String maCTKHTour){
-        ArrayList<CTietKHTourDTO> list = getAllCTietKHTours(); // list CTietKHTours
+        ArrayList<_CTietKHTourDTO> list = getAllCTietKHTours(); // list CTietKHTours
 
-        for (CTietKHTourDTO ct : list){
+        for (_CTietKHTourDTO ct : list){
             if(ct.getMaKHTour().trim().equalsIgnoreCase(maCTKHTour))
                 return true;
         }
