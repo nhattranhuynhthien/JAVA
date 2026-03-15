@@ -1,20 +1,18 @@
 package org.example.gui;
 
-import org.example.gui.panel.KeHoachTourPanel;
-import org.example.gui.panel.LoaiTourPanel;
-import org.example.gui.panel.TourPanel;
+import org.example.gui.panel.*;
 
 import javax.swing.*;
 import java.awt.*;
 
-public class MainFrame extends JFrame {
+public class _MainFrame extends JFrame {
 
     //layout
     private CardLayout cardLayout;
     private JPanel contentArea;
     private JButton activeButton;
 
-    public MainFrame() {
+    public _MainFrame() {
         setTitle("Quản lý Tour du lịch");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setSize(1000, 600);
@@ -40,7 +38,12 @@ public class MainFrame extends JFrame {
         String[][] menus = {
                 {"Tour", "Tour"},
                 {"Loại Tour", "LoaiTour"},
-                {"Kế Hoạch Tour", "KeHoachTour"}
+                {"Kế Hoạch Tour", "KeHoachTour"},
+                {"Hóa đơn", "HoaDon"},
+                {"Khách hàng", "KhachHang"},
+                {"Nhân viên", "NhanVien"},
+                {"Địa điểm", "DiaDiem"},
+                {"Thống kê", "ThongKe"}
         };
 
         for(String[] m : menus){
@@ -58,9 +61,15 @@ public class MainFrame extends JFrame {
         contentArea = new JPanel(cardLayout);
         contentArea.setBackground(Color.cyan);
 
-        contentArea.add(new TourPanel(), "Tour");
-        contentArea.add(new LoaiTourPanel(), "LoaiTour");
-        contentArea.add(new KeHoachTourPanel(), "KeHoachTour");
+        contentArea.add(new _TourPanel(), "Tour");
+        contentArea.add(new _LoaiTourPanel(), "LoaiTour");
+        contentArea.add(new _KeHoachTourPanel(), "KeHoachTour");
+        contentArea.add(new HoaDonPanel(), "HoaDon");
+        contentArea.add(new DiaDiemPanel(), "DiaDiem");
+        contentArea.add(new KhachHangPanel(), "KhachHang");
+        contentArea.add(new NhanVienPanel(), "NhanVien");
+        contentArea.add(new DiaDiemPanel(), "DiaDiem");
+        contentArea.add(new _StatisticsPanel(), "ThongKe");
 
         return contentArea;
     }
@@ -101,5 +110,4 @@ public class MainFrame extends JFrame {
         });
         return btn;
     }
-
 }
