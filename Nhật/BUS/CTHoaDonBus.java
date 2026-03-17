@@ -2,23 +2,23 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package BUS;
+package org.example.bus;
 
-import DAO.DsCTietHD;
+import org.example.dao.CTietHDDAO;
 import java.util.ArrayList;
-import DTO.CTietHD;
-import DAO.DsHoaDon;
+import org.example.dto.CTietHDDTO;
+import org.example.dao.HoaDonDAO;
 /**
  *
  * @author Nhat
  */
-public class CTHoaDonBus {
-    public static ArrayList<CTietHD> ds;
-    public static DsCTietHD dao;
+public class CTHoaDonBUS {
+    public static ArrayList<CTietHDDTO> ds;
+    public static CTietHDDAO dao;
     
-    public CTHoaDonBus(){
+    public CTHoaDonBUS(){
     if(ds==null){
-        dao=new DsCTietHD();
+        dao=new CTietHDDAO();
         ds=dao.getDs();
     }
 }
@@ -27,34 +27,34 @@ public class CTHoaDonBus {
         ds=dao.getDs();
     }
     
-    public static ArrayList<CTietHD> getDs(){
+    public static ArrayList<CTietHDDTO> getDs(){
         return ds;
     }
     
-    public boolean timCtiethd(CTietHD ct){
-        for(CTietHD cthd:ds){
+    public boolean timCtiethd(CTietHDDTO ct){
+        for(CTietHDDTO cthd:ds){
             if(ct.getMaHD().equals(cthd.getMaHD()) && ct.getMaKHDi().equals(cthd.getMaKHDi()))
                 return true;
                 }
         return false;
     }
     
-    public CTietHD timCt(String mact,String makh){
-        for(CTietHD cthd:ds){
+    public CTietHDDTO timCt(String mact,String makh){
+        for(CTietHDDTO cthd:ds){
             if(cthd.getMaHD().equals(mact) && cthd.getMaKHDi().equals(makh))
                 return cthd;
         }
         return null;
     }
         
-    public boolean themCTietHd(CTietHD ct){
+    public boolean themCTietHd(CTietHDDTO ct){
         ds.add(ct);
         dao.themCtietHD(ct);
         return true;
     }
     
     public boolean xoaCtietHd(String mact,String makh){
-        DTO.CTietHD ct = timCt(mact, makh);
+        org.example.dto.CTietHDDTO ct = timCt(mact, makh);
                 if (ct == null) {
             return false;
         }
@@ -67,7 +67,7 @@ public class CTHoaDonBus {
         return false;
     }
     
-    public boolean suaCtiethd(CTietHD ct){
+    public boolean suaCtiethd(CTietHDDTO ct){
         boolean flag=false;
         if(timCtiethd(ct)!=true){
             flag=false;
@@ -87,17 +87,17 @@ public class CTHoaDonBus {
         }
         return flag; 
    }
-    public ArrayList<DTO.CTietHD> getDstheoma(String mahd){
-        DAO.DsCTietHD dao=new DAO.DsCTietHD();
+    public ArrayList<org.example.dto.CTietHDDTO> getDstheoma(String mahd){
+        org.example.dao.CTietHDDAO dao=new org.example.dao.CTietHDDAO();
         return dao.getDstheoma(mahd);
     }
     public float laygia(String mahd){
-        DAO.DsCTietHD daoCTietHD=new DAO.DsCTietHD();
+        org.example.dao.CTietHDDAO daoCTietHD=new org.example.dao.CTietHDDAO();
         return daoCTietHD.laygia(mahd);
     }
     
-    public ArrayList<DTO.CTietHD> timNangcao(String loai,String key){
-        ArrayList<DTO.CTietHD> ds =new ArrayList<>();
+    public ArrayList<org.example.dto.CTietHDDTO> timNangcao(String loai,String key){
+        ArrayList<org.example.dto.CTietHDDTO> ds =new ArrayList<>();
         String tencot="";
         if(loai.equals("Mã hóa đơn")){
             tencot="mahd";

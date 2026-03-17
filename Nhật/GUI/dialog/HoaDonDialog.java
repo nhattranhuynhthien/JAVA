@@ -2,34 +2,47 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JDialog.java to edit this template
  */
-package GUI.dialog;
+package org.example.gui.dialog;
 
-import GUI.panel.CTHoaDon;
-import GUI.NhapCTHD;
+
+import org.example.bus.*;
+import org.example.dto.*;
+import org.example.gui.panel.CTHoaDonPanel;
+import org.example.gui.NhapCTHD;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Date;
 import javax.swing.JOptionPane;
 import javax.swing.InputVerifier;
+import javax.swing.JComboBox;
 import javax.swing.JComponent;
+import javax.swing.*;
+import java.util.List;
 /**
  *
  * @author Nhat
  */
 public class HoaDonDialog extends javax.swing.JDialog {
-    private BUS.HoaDonBus bus;
+    private HoaDonBUS bus;
     private int soluong=0;
-    private BUS.CTHoaDonBus busct;
-    
+    private CTHoaDonBUS busct;
+    private _KeHoachTourBUS khtbus;
+    private KhachHangBUS khbus;
+    private NhanVienBUS nvbus;
     /**
      * Creates new form HoaDonDialog
      */
     public HoaDonDialog() {
         initComponents();
-        this.bus=new BUS.HoaDonBus();
+        this.bus=new HoaDonBUS();
+        this.khtbus=new _KeHoachTourBUS();
+        this.khbus =new KhachHangBUS();
+        this.nvbus =new NhanVienBUS();
         this.setTitle("Hóa đơn");
         this.setLocationRelativeTo(null);
-        
+        loadCbox();
        txtmahd.setInputVerifier(new InputVerifier(){
        @Override 
        public boolean verify(JComponent input){
@@ -44,44 +57,6 @@ public class HoaDonDialog extends javax.swing.JDialog {
        
     });
        
-       txtmakht.setInputVerifier(new InputVerifier(){
-       @Override 
-       public boolean verify(JComponent input){
-        String ma=txtmakht.getText().trim();
-        
-       if(!ma.matches("^KHT\\d{2}$")){
-            JOptionPane.showMessageDialog(null, "Mã kế hoạch tour phải có dạng KHTxx!");
-            return false;
-        }
-       return true;
-    }
-    });
-       
-       txtmakhdat.setInputVerifier(new InputVerifier(){
-       @Override 
-       public boolean verify(JComponent input){
-        String ma=txtmakhdat.getText().trim();
-        
-       if(!ma.matches("^KH\\d{2}$")){
-            JOptionPane.showMessageDialog(null, "Mã khách hàng phải có dạng KHxxx!");
-            return false;
-        }
-       return true;
-    }   
-    });
-    
-       txtmanv.setInputVerifier(new InputVerifier(){
-       @Override 
-       public boolean verify(JComponent input){
-        String ma=txtmanv.getText().trim();
-        
-       if(!ma.matches("^NV\\d{2}$")){
-            JOptionPane.showMessageDialog(null, "Mã nhân viên phải có dạng NVxxx!");
-            return false;
-        }
-       return true;
-    }   
-    });
        txtsoluong.setInputVerifier(new InputVerifier(){
        @Override 
        public boolean verify(JComponent input){
@@ -97,22 +72,45 @@ public class HoaDonDialog extends javax.swing.JDialog {
        
     }
 
+    public void setupAutoComplete(JComboBox<String> cbx, List<String> data) {
+    cbx.setEditable(true);
+    cbx.setModel(new DefaultComboBoxModel<>(data.toArray(new String[0])));
+    JTextField txt = (JTextField) cbx.getEditor().getEditorComponent();
     
-    public HoaDonDialog(DTO.HoaDon hd) {
+    txt.addKeyListener(new KeyAdapter() {
+        @Override
+        public void keyReleased(KeyEvent e) {
+            int k = e.getKeyCode();
+            if (k == 38 || k == 40 || k == 10) return; 
+            
+            SwingUtilities.invokeLater(() -> {
+                String input = txt.getText();
+                
+                String[] filtered = data.stream()
+                        .filter(s -> s.toLowerCase().contains(input.toLowerCase()))
+                        .toArray(String[]::new);
+                        
+                cbx.setModel(new DefaultComboBoxModel<>(filtered));
+                txt.setText(input); 
+                cbx.setPopupVisible(filtered.length > 0);
+            });
+        }
+    });
+}
+    
+    public HoaDonDialog(org.example.dto.HoaDonDTO hd) {
         initComponents();
-        this.bus=new BUS.HoaDonBus();
-        this.setTitle("Hóa đơn");
+        this.setTitle("Sửa hóa đơn");
         this.setLocationRelativeTo(null);
-        
         this.soluong=hd.getSoluong();
+        loadCbox();
         txtmahd.setText(hd.getMaHD());
-        txtmakhdat.setText(hd.getMaKHDat());
-        txtmakht.setText(hd.getMaKHTour());
-        txtmanv.setText(hd.getMaNV());
+        cbmakh.setSelectedItem(hd.getMaKHDat());
+        cbmakht.setSelectedItem(hd.getMaKHTour());
+        cbmanv.setSelectedItem(hd.getMaNV());
         txtsoluong.setText(String.valueOf(hd.getSoluong()));
         txttongtien.setText(String.format("%.0f", hd.getTongTien()));
-        String ngay=String.valueOf(hd.getNgay());
-        txtngay.setDate(Helper.DateHelper.stringToDate(ngay));
+        txtngay.setDate(org.example.helper.DateHelper.toUtilDate(hd.getNgay()));
         txtmahd.setInputVerifier(new InputVerifier(){
        @Override 
        public boolean verify(JComponent input){
@@ -127,44 +125,7 @@ public class HoaDonDialog extends javax.swing.JDialog {
        
     });
        
-       txtmakht.setInputVerifier(new InputVerifier(){
-       @Override 
-       public boolean verify(JComponent input){
-        String ma=txtmakht.getText().trim();
-        
-       if(!ma.matches("^KHT\\d{2}$")){
-            JOptionPane.showMessageDialog(null, "Mã kế hoạch tour phải có dạng KHTxx!");
-            return false;
-        }
-       return true;
-    }
-    });
-       
-       txtmakhdat.setInputVerifier(new InputVerifier(){
-       @Override 
-       public boolean verify(JComponent input){
-        String ma=txtmakhdat.getText().trim();
-        
-       if(!ma.matches("^KH\\d{2}$")){
-            JOptionPane.showMessageDialog(null, "Mã khách hàng phải có dạng KHxxx!");
-            return false;
-        }
-       return true;
-    }   
-    });
-    
-       txtmanv.setInputVerifier(new InputVerifier(){
-       @Override 
-       public boolean verify(JComponent input){
-        String ma=txtmanv.getText().trim();
-        
-       if(!ma.matches("^NV\\d{2}$")){
-            JOptionPane.showMessageDialog(null, "Mã nhân viên phải có dạng NVxxx!");
-            return false;
-        }
-       return true;
-    }   
-    });
+
        txtsoluong.setInputVerifier(new InputVerifier(){
        @Override 
        public boolean verify(JComponent input){
@@ -180,11 +141,35 @@ public class HoaDonDialog extends javax.swing.JDialog {
        
     }
     
+    public void loadCbox(){
+        this.bus=new HoaDonBUS();
+        this.khtbus=new _KeHoachTourBUS();
+        this.khbus =new KhachHangBUS();
+        ArrayList<_KeHoachTourDTO> dskht =khtbus.getAllKeHoachTours();
+        ArrayList<KhachHang> dskh =KhachHangBUS.dsKH;
+        ArrayList<NhanVien> dsnv =NhanVienBUS.dsNV;
+        List<String> dsMa = new ArrayList<>();
+        
+        for(_KeHoachTourDTO kht: dskht){
+            dsMa.add(kht.getMaKHTour());
+        }
+        setupAutoComplete(cbmakht, dsMa);
+        dsMa=new ArrayList<>();
+        for(KhachHang kh:dskh){
+            dsMa.add(kh.getMaKH());
+        }
+        setupAutoComplete(cbmakh, dsMa);
+        dsMa=new ArrayList<>();
+        for(NhanVien nv:dsnv){
+            dsMa.add(nv.getMaNV());
+        }
+        setupAutoComplete(cbmanv, dsMa);
+    }
     public void resetField(){
                     txtmahd.setText("");
-                    txtmakhdat.setText("");
-                    txtmakht.setText("");
-                    txtmanv.setText("");
+                    cbmakh.setSelectedItem("");
+                    cbmakht.setSelectedItem("");
+                    cbmanv.setSelectedItem("");
                     txtsoluong.setText("");
                     txttongtien.setText("");
                     txtngay.setDate(new java.util.Date());
@@ -204,9 +189,6 @@ public class HoaDonDialog extends javax.swing.JDialog {
         jLabel4 = new javax.swing.JLabel();
         jLabel5 = new javax.swing.JLabel();
         txtmahd = new javax.swing.JTextField();
-        txtmakht = new javax.swing.JTextField();
-        txtmanv = new javax.swing.JTextField();
-        txtmakhdat = new javax.swing.JTextField();
         txttongtien = new javax.swing.JTextField();
         jLabel1 = new javax.swing.JLabel();
         btnluu = new javax.swing.JButton();
@@ -215,6 +197,9 @@ public class HoaDonDialog extends javax.swing.JDialog {
         btnxoa = new javax.swing.JButton();
         jLabel7 = new javax.swing.JLabel();
         txtngay = new com.toedter.calendar.JDateChooser();
+        cbmakht = new javax.swing.JComboBox<>();
+        cbmakh = new javax.swing.JComboBox<>();
+        cbmanv = new javax.swing.JComboBox<>();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
@@ -236,17 +221,6 @@ public class HoaDonDialog extends javax.swing.JDialog {
         txtmahd.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 txtmahdActionPerformed(evt);
-            }
-        });
-
-        txtmakht.addFocusListener(new java.awt.event.FocusAdapter() {
-            public void focusLost(java.awt.event.FocusEvent evt) {
-                txtmakhtFocusLost(evt);
-            }
-        });
-        txtmakht.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                txtmakhtActionPerformed(evt);
             }
         });
 
@@ -288,73 +262,114 @@ public class HoaDonDialog extends javax.swing.JDialog {
 
         jLabel7.setText("Ngày");
 
+        txtngay.setDateFormatString("dd/MM/yyyy");
+
+        cbmakht.setEditable(true);
+        cbmakht.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cbmakhtActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(69, 69, 69)
-                .addComponent(btnluu, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(btnxoa, javax.swing.GroupLayout.PREFERRED_SIZE, 86, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(72, 72, 72))
-            .addGroup(layout.createSequentialGroup()
-                .addGap(30, 30, 30)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 70, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel3)
-                    .addComponent(jLabel4)
-                    .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 151, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 183, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 136, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel7, javax.swing.GroupLayout.PREFERRED_SIZE, 49, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(txtmakhdat, javax.swing.GroupLayout.DEFAULT_SIZE, 177, Short.MAX_VALUE)
-                    .addComponent(txtmahd, javax.swing.GroupLayout.DEFAULT_SIZE, 177, Short.MAX_VALUE)
-                    .addComponent(txtmakht)
-                    .addComponent(txtmanv, javax.swing.GroupLayout.DEFAULT_SIZE, 177, Short.MAX_VALUE)
-                    .addComponent(txtsoluong, javax.swing.GroupLayout.DEFAULT_SIZE, 177, Short.MAX_VALUE)
-                    .addComponent(txttongtien, javax.swing.GroupLayout.DEFAULT_SIZE, 177, Short.MAX_VALUE)
-                    .addComponent(txtngay, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addContainerGap(18, Short.MAX_VALUE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(30, 30, 30)
+                        .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 183, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(6, 6, 6)
+                        .addComponent(txtmahd, javax.swing.GroupLayout.PREFERRED_SIZE, 177, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(30, 30, 30)
+                        .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 151, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(38, 38, 38)
+                        .addComponent(cbmakht, javax.swing.GroupLayout.PREFERRED_SIZE, 177, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(30, 30, 30)
+                        .addComponent(jLabel7, javax.swing.GroupLayout.PREFERRED_SIZE, 49, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(140, 140, 140)
+                        .addComponent(txtngay, javax.swing.GroupLayout.PREFERRED_SIZE, 177, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(30, 30, 30)
+                        .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 70, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(119, 119, 119)
+                        .addComponent(txtsoluong, javax.swing.GroupLayout.PREFERRED_SIZE, 177, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(30, 30, 30)
+                        .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 136, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(53, 53, 53)
+                        .addComponent(txttongtien, javax.swing.GroupLayout.PREFERRED_SIZE, 177, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(69, 69, 69)
+                        .addComponent(btnluu, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(112, 112, 112)
+                        .addComponent(btnxoa, javax.swing.GroupLayout.PREFERRED_SIZE, 86, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(30, 30, 30)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(jLabel4, javax.swing.GroupLayout.DEFAULT_SIZE, 151, Short.MAX_VALUE)
+                                .addGap(38, 38, 38))
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(jLabel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addGap(53, 53, 53)))
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(cbmakh, 0, 177, Short.MAX_VALUE)
+                            .addComponent(cbmanv, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                .addContainerGap(20, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(txtmahd, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel1))
+            .addGroup(layout.createSequentialGroup()
+                .addGap(6, 6, 6)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(3, 3, 3)
+                        .addComponent(jLabel1))
+                    .addComponent(txtmahd, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(txtmakht, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel2))
-                .addGap(18, 18, 18)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(txtmakhdat, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel4))
-                .addGap(13, 13, 13)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel3)
-                    .addComponent(txtmanv, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jLabel7)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(3, 3, 3)
+                        .addComponent(jLabel2))
+                    .addComponent(cbmakht, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(21, 21, 21)
+                        .addComponent(jLabel4))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(18, 18, 18)
+                        .addComponent(cbmakh, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(16, 16, 16)
+                        .addComponent(jLabel3))
+                    .addGroup(layout.createSequentialGroup()
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(cbmanv, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGap(7, 7, 7)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(6, 6, 6)
+                        .addComponent(jLabel7))
                     .addComponent(txtngay, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(txtsoluong, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel6))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(txttongtien)
-                    .addComponent(jLabel5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addGap(6, 6, 6)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(3, 3, 3)
+                        .addComponent(jLabel6))
+                    .addComponent(txtsoluong, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(12, 12, 12)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(txttongtien, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(12, 12, 12)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(btnluu)
-                    .addComponent(btnxoa))
-                .addGap(64, 64, 64))
+                    .addComponent(btnxoa)))
         );
 
         pack();
@@ -363,15 +378,6 @@ public class HoaDonDialog extends javax.swing.JDialog {
     private void txtmahdActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtmahdActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_txtmahdActionPerformed
-
-    private void txtmakhtFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtmakhtFocusLost
-        // TODO add your handling code here:
-        
-    }//GEN-LAST:event_txtmakhtFocusLost
-
-    private void txtmakhtActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtmakhtActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_txtmakhtActionPerformed
 
     private void txttongtienFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txttongtienFocusLost
         // TODO add your handling code here:
@@ -387,7 +393,7 @@ public class HoaDonDialog extends javax.swing.JDialog {
        try {
            
         String ma = txtmahd.getText().trim();
-        String makh =txtmakhdat.getText().trim();
+        String makh =cbmakh.getSelectedItem().toString().trim();
         int newSl = Integer.parseInt(txtsoluong.getText().trim());
         float tongTien = Float.parseFloat(txttongtien.getText().trim());
         
@@ -396,10 +402,10 @@ public class HoaDonDialog extends javax.swing.JDialog {
             return;
         }
 
-        DTO.HoaDon kt = bus.timHd(ma); 
+        org.example.dto.HoaDonDTO kt = bus.timHd(ma); 
 
         if (kt != null) { 
-        DTO.HoaDon hd = new DTO.HoaDon(ma, txtmakht.getText().trim(), txtmakhdat.getText().trim(), txtmanv.getText().trim(), kt.getNgay(),kt.getSoluong(), kt.getTongTien());
+        org.example.dto.HoaDonDTO hd = new org.example.dto.HoaDonDTO(ma, cbmakht.getSelectedItem().toString().trim(), cbmakh.getSelectedItem().toString().trim(), cbmanv.getSelectedItem().toString().trim(), kt.getNgay(),kt.getSoluong(), kt.getTongTien());
 
             if (bus.suaHoaDon(hd)) {
             
@@ -413,7 +419,7 @@ public class HoaDonDialog extends javax.swing.JDialog {
                 } else if (newSl < this.soluong) { 
                     int veDu = this.soluong - newSl;
                     JOptionPane.showMessageDialog(this, "Số lượng giảm. Vui lòng chọn " + veDu + " vé để xóa.");
-                    CTHoaDon panelXoa = new CTHoaDon(ma, veDu); 
+                    CTHoaDonPanel panelXoa = new CTHoaDonPanel(ma, veDu); 
                     JOptionPane.showConfirmDialog(null, panelXoa, "Xóa chi tiết thừa", JOptionPane.DEFAULT_OPTION, JOptionPane.PLAIN_MESSAGE);
                     
                 } else {
@@ -425,15 +431,19 @@ public class HoaDonDialog extends javax.swing.JDialog {
             }
             
         } else { 
-            Date ngaydl=txtngay.getDate();
-            LocalDate ngay =Helper.DateHelper.toLocalDateFromUtil(ngaydl);
+            java.util.Date ngaydl = txtngay.getDate();
             
-            DTO.HoaDon hdmoi = new DTO.HoaDon(ma, txtmakht.getText().trim(), txtmakhdat.getText().trim(), txtmanv.getText().trim(),ngay, 0, 0.0f);
+            if (ngaydl == null) {
+                JOptionPane.showMessageDialog(this, "Lỗi: Vui lòng chọn ngày lập hóa đơn!");
+                return; 
+            }
 
-            ArrayList<DTO.CTietHD> ds = new ArrayList<>();
-            if (bus.themHoaDon(hdmoi, ds)) {
+            LocalDate ngay = org.example.helper.DateHelper.toLocalDateFromUtil(ngaydl);
+            
+            org.example.dto.HoaDonDTO hdmoi = new org.example.dto.HoaDonDTO(ma, cbmakht.getSelectedItem().toString().trim(), cbmakh.getSelectedItem().toString().trim(), cbmanv.getSelectedItem().toString().trim(), ngay, 0, 0.0f);
+
+            if (bus.themHoaDon(hdmoi)) { 
                 JOptionPane.showMessageDialog(this, "Thêm thành công! Hãy nhập thông tin chi tiết.");
-                
                 NhapCTHD nhapCTHD = new NhapCTHD(null, true, ma, newSl);
                 nhapCTHD.setVisible(true);
                 this.dispose();
@@ -449,10 +459,9 @@ public class HoaDonDialog extends javax.swing.JDialog {
 
     private void txtsoluongFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtsoluongFocusLost
         // TODO add your handling code here:
-        String makht=txtmakht.getText().trim();
-        int sl=Integer.parseInt(txtsoluong.getText().trim());
+        String makht = cbmakht.getSelectedItem() != null ? cbmakht.getSelectedItem().toString().trim() : "";        int sl=Integer.parseInt(txtsoluong.getText().trim());
         if(!makht.isEmpty()){
-            DAO.DsHoaDon dao =new DAO.DsHoaDon();
+            org.example.dao.HoaDonDAO dao =new org.example.dao.HoaDonDAO();
             float gia=dao.laygia(makht);
             if(gia>0){
                 txttongtien.setText(String.format("%.0f", gia*sl));
@@ -473,6 +482,10 @@ public class HoaDonDialog extends javax.swing.JDialog {
         // TODO add your handling code here:
         resetField();
     }//GEN-LAST:event_btnxoaActionPerformed
+
+    private void cbmakhtActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cbmakhtActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_cbmakhtActionPerformed
 
     
     /**
@@ -520,6 +533,9 @@ public class HoaDonDialog extends javax.swing.JDialog {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnluu;
     private javax.swing.JButton btnxoa;
+    private javax.swing.JComboBox<String> cbmakh;
+    private javax.swing.JComboBox<String> cbmakht;
+    private javax.swing.JComboBox<String> cbmanv;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
@@ -528,9 +544,6 @@ public class HoaDonDialog extends javax.swing.JDialog {
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
     private javax.swing.JTextField txtmahd;
-    private javax.swing.JTextField txtmakhdat;
-    private javax.swing.JTextField txtmakht;
-    private javax.swing.JTextField txtmanv;
     private com.toedter.calendar.JDateChooser txtngay;
     private javax.swing.JTextField txtsoluong;
     private javax.swing.JTextField txttongtien;

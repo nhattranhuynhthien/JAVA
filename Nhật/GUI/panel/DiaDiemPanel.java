@@ -2,30 +2,30 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JPanel.java to edit this template
  */
-package GUI.panel;
-import GUI.dialog.DiaDiemDialog;
-import DAO.DsDiaDiem;
-import BUS.DiaDiemBus;
-import BUS.HoaDonBus;
-import java.time.LocalDate;
+package org.example.gui.panel;
+import org.example.gui.dialog.DiaDiemDialog;
+import org.example.dao.DiaDiemDAO;
+import org.example.bus.DiaDiemBUS;
+import org.example.bus.HoaDonBUS;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
+import org.example.dto.*;
 /**
  *
  * @author Nhat
  */
-public class DiaDiem extends javax.swing.JPanel {
+public class DiaDiemPanel extends javax.swing.JPanel {
     private DefaultTableModel model;
-    private BUS.DiaDiemBus bus;
+    private org.example.bus.DiaDiemBUS bus;
     /**
      * Creates new form DiaDiemN
      */
-    public DiaDiem() {
+    public DiaDiemPanel() {
         initComponents();
-        bus=new BUS.DiaDiemBus();
+        bus=new org.example.bus.DiaDiemBUS();
         model = (DefaultTableModel) tbldd.getModel();
         loadData();
     }
@@ -33,23 +33,23 @@ public class DiaDiem extends javax.swing.JPanel {
     private void loadData(){
         model.setRowCount(0);
         
-        ArrayList<DTO.DiaDiem> ds = DiaDiemBus.getDs();
+        ArrayList<org.example.dto.DiaDiemDTO> ds = DiaDiemBUS.getDs();
      if(ds==null) return;
-     for(DTO.DiaDiem dd: ds){
+     for(org.example.dto.DiaDiemDTO dd: ds){
          model.addRow(new Object[]{
-             dd.getTenDiaDiem(),dd.getNgayThucHien(),String.format("%.0f", dd.getTongChi())});
+             dd.getTenDiaDiem(),org.example.helper.DateHelper.toString(dd.getNgayThucHien()),String.format("%.0f", dd.getTongChi())});
      }
     }
 
     
-    private void loadData(ArrayList<DTO.DiaDiem> ds,String ma){
+    private void loadData(ArrayList<org.example.dto.DiaDiemDTO> ds,String ma){
         model.setRowCount(0);
         
      ds = bus.timdd(ma);
      if(ds==null) return;
-     for(DTO.DiaDiem dd: ds){
+     for(org.example.dto.DiaDiemDTO dd: ds){
          model.addRow(new Object[]{
-             dd.getTenDiaDiem(),dd.getNgayThucHien(),dd.getTongChi()});
+             dd.getTenDiaDiem(),org.example.helper.DateHelper.toString(dd.getNgayThucHien()),dd.getTongChi()});
      }
     }
     
@@ -73,7 +73,8 @@ public class DiaDiem extends javax.swing.JPanel {
         jPanel3 = new javax.swing.JPanel();
         btnthem = new javax.swing.JButton();
         btnxoa = new javax.swing.JButton();
-        jButton1 = new javax.swing.JButton();
+        btnsua = new javax.swing.JButton();
+        btnreset = new javax.swing.JButton();
         btnxuat = new javax.swing.JButton();
 
         setLayout(new java.awt.BorderLayout());
@@ -138,6 +139,7 @@ public class DiaDiem extends javax.swing.JPanel {
         jPanel3.add(btnthem);
 
         btnxoa.setText("Xóa");
+        btnxoa.setEnabled(false);
         btnxoa.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnxoaActionPerformed(evt);
@@ -145,13 +147,22 @@ public class DiaDiem extends javax.swing.JPanel {
         });
         jPanel3.add(btnxoa);
 
-        jButton1.setText("Làm mới");
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
+        btnsua.setText("Sửa");
+        btnsua.setEnabled(false);
+        btnsua.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
+                btnsuaActionPerformed(evt);
             }
         });
-        jPanel3.add(jButton1);
+        jPanel3.add(btnsua);
+
+        btnreset.setText("Làm mới");
+        btnreset.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnresetActionPerformed(evt);
+            }
+        });
+        jPanel3.add(btnreset);
 
         btnxuat.setText("Xuất excel");
         btnxuat.addActionListener(new java.awt.event.ActionListener() {
@@ -167,12 +178,24 @@ public class DiaDiem extends javax.swing.JPanel {
     private void tblddMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblddMouseClicked
         // TODO add your handling code here:
         int row = tbldd.getSelectedRow();
-
+        if(row!=-1){
+            btnsua.setEnabled(true);
+            btnxoa.setEnabled(true);
+            if(evt.getClickCount()==2){
+                int cf=JOptionPane.showConfirmDialog(this, "Bạn có muốn xuất Excel dòng này không?");
+                
+                if(cf==JOptionPane.YES_OPTION){
+                    org.example.helper.ExcelHelper.xuatExcel1Dong(tbldd, row, jPanel1, "Địa điểm: "+bus.timdd(tbldd.getValueAt(row, 0).toString().trim()));
+                }else{
+                    return;
+                }
+            }
+        }
     }//GEN-LAST:event_tblddMouseClicked
 
     private void btnxuatActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnxuatActionPerformed
         // TODO add your handling code here:
-        Helper.ExcelHelper.xuatExcel(tbldd, this, "Danh sach hoa don");
+        org.example.helper.ExcelHelper.xuatExcel(tbldd, this, "Danh sach hoa don");
     }//GEN-LAST:event_btnxuatActionPerformed
 
     private void btnthemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnthemActionPerformed
@@ -191,20 +214,25 @@ public class DiaDiem extends javax.swing.JPanel {
             JOptionPane.showMessageDialog(this, "Vui lòng chọn địa điểm cần xóa");
             return;
         }
-        DTO.DiaDiem dd=bus.timDiaDiem(model.getValueAt(row, 0).toString());
+        String tendd =model.getValueAt(row, 0).toString();
+        org.example.dto.DiaDiemDTO dd=bus.timDiaDiem(tendd); if(dd==null){
+            JOptionPane.showMessageDialog(this, "Lỗi không tìm thấy");
+            return;
+            }
         if(JOptionPane.showConfirmDialog(this, "Xóa địa điểm?","Xác nhận",JOptionPane.YES_NO_OPTION)==JOptionPane.YES_OPTION){
             if(bus.xoaDiaDiem(dd)){
-                model.removeRow(row);
                 JOptionPane.showMessageDialog(this, "Xóa thành công");
                 loadData();
+            }else{
+                JOptionPane.showMessageDialog(this, "Xóa thất bại");
             }
     }//GEN-LAST:event_btnxoaActionPerformed
     }
     
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+    private void btnresetActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnresetActionPerformed
         // TODO add your handling code here:
         loadData();
-    }//GEN-LAST:event_jButton1ActionPerformed
+    }//GEN-LAST:event_btnresetActionPerformed
 
     private void btntimActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btntimActionPerformed
         // TODO add your handling code here:
@@ -212,14 +240,27 @@ public class DiaDiem extends javax.swing.JPanel {
         loadData(bus.timdd(txttendd.getText().trim()), txttendd.getText().trim());
     }//GEN-LAST:event_btntimActionPerformed
 
+    private void btnsuaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnsuaActionPerformed
+        // TODO add your handling code here:
+        int row=tbldd.getSelectedRow();
+        if(row!=-1){
+            String ten=tbldd.getValueAt(row, 0).toString().trim();
+            DiaDiemDTO dd =bus.timDiaDiem(ten);
+        DiaDiemDialog ddd=new DiaDiemDialog(dd);
+        ddd.setModal(true);
+        ddd.setVisible(true);
+        }
+    }//GEN-LAST:event_btnsuaActionPerformed
+
   
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnreset;
+    private javax.swing.JButton btnsua;
     private javax.swing.JButton btnthem;
     private javax.swing.JButton btntim;
     private javax.swing.JButton btnxoa;
     private javax.swing.JButton btnxuat;
-    private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JPanel jPanel1;

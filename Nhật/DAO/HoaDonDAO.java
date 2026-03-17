@@ -2,9 +2,9 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package DAO;
-import DTO.CTietHD;
-import DTO.HoaDon;
+package org.example.dao;
+import org.example.dto.CTietHDDTO;
+import org.example.dto.HoaDonDTO;
 import java.sql.*;
 import java.util.*;
 import java.time.LocalDate;
@@ -12,9 +12,9 @@ import java.time.LocalDate;
  *
  * @author Nhat
  */
-public class DsHoaDon {
-    public ArrayList<HoaDon> getDsHoaDon(){
-        ArrayList<HoaDon> list= new ArrayList<>();
+public class HoaDonDAO {
+    public ArrayList<HoaDonDTO> getDsHoaDon(){
+        ArrayList<HoaDonDTO> list= new ArrayList<>();
         
         String sql="SELECT * FROM HoaDon";
         
@@ -22,7 +22,7 @@ public class DsHoaDon {
         PreparedStatement ps=conn.prepareStatement(sql);
         ResultSet rs=ps.executeQuery()){
         while(rs.next()){
-            HoaDon hd=maptoHd(rs);
+            HoaDonDTO hd=maptoHd(rs);
             list.add(hd);
         }
         }catch(SQLException e){
@@ -31,9 +31,9 @@ public class DsHoaDon {
         return list;
     }
 
-    public DsHoaDon() {
+    public HoaDonDAO() {
     }
-    public HoaDon timHoaDon(String mahd){
+    public HoaDonDTO timHoaDon(String mahd){
         String sql="SELECT * FROM HOADON where mahd=?";
         try(Connection conn=KetNoiCSDL.getConnection();
             PreparedStatement ps=conn.prepareStatement(sql)){
@@ -48,7 +48,7 @@ public class DsHoaDon {
         return null;
     }
     
-    public HoaDon maptoHd(ResultSet rs) throws SQLException{
+    public HoaDonDTO maptoHd(ResultSet rs) throws SQLException{
         String mahd=rs.getString("MaHD");
         String makhtour = rs.getString("MaKHTour");
         String makhdi = rs.getString("MaKHangDat");
@@ -56,62 +56,46 @@ public class DsHoaDon {
         String manv=rs.getString("MaNV");
         int soluong=rs.getInt("soluong");
         LocalDate ngay =LocalDate.parse(rs.getDate("ngay").toString());
-        return new HoaDon(mahd, makhtour, makhdi, manv,ngay,soluong, tongtien);
+        return new HoaDonDTO(mahd, makhtour, makhdi, manv,ngay,soluong, tongtien);
     }
-    public boolean themHoaDon(HoaDon hd,ArrayList<CTietHD> listct){
-        if(timHoaDon(hd.getMaHD())!=null){
-            return false;
-        }
-        String sqlhd="Insert into hoadon(mahd,makhtour,makhangdat,tongtien,manv,soluong,ngay) values(?,?,?,?,?,?,?)";
-        String sqlctiethd = "Insert into cthoadon(mahd,makhang,giave) values(?,?,?)";
-        Connection conn=null;
-        
-        try{
-            conn=KetNoiCSDL.getConnection();
-            conn.setAutoCommit(false);
-            try(PreparedStatement ps=conn.prepareStatement(sqlhd)){
-                ps.setString(1, hd.getMaHD());
-                ps.setString(2, hd.getMaKHTour());
-                ps.setString(3, hd.getMaKHDat());
-                ps.setFloat(4, hd.getTongTien());
-                ps.setString(5, hd.getMaNV());
-                ps.setFloat(6,hd.getSoluong());
-                ps.setDate(7, java.sql.Date.valueOf(hd.getNgay()));
-                ps.executeUpdate();
-            }
-            try(PreparedStatement ps=conn.prepareStatement(sqlctiethd)){
-                for(CTietHD cthd:listct){
-                    ps.setString(1, hd.getMaHD());
-                    ps.setString(2, cthd.getMaKHDi());
-                    ps.setFloat(3,cthd.getGiaVe());
-                    ps.addBatch();
-                }
-                ps.executeBatch();
-            }
-            conn.commit();
-            return true;
-        }catch (SQLException ex) {
-            ex.printStackTrace();
-            if(conn!=null){
-                try{
-                    conn.rollback();
-                }catch(SQLException e){
-                    e.printStackTrace();
-                }
-            }
-        }finally{
-            if(conn!=null){
-                try{
-                    conn.close();
-                }catch(SQLException e){
-                    e.printStackTrace();
-                }
-            }
-        }
+public boolean themHoaDon(HoaDonDTO hd) {
+    if(timHoaDon(hd.getMaHD()) != null) {
         return false;
-}
+    }
     
-    public boolean xoaHd(HoaDon hd){
+    String sqlhd = "Insert into hoadon(mahd,makhtour,makhangdat,tongtien,manv,soluong,ngay) values(?,?,?,?,?,?,?)";
+    Connection conn = null;
+    
+    try {
+        conn = KetNoiCSDL.getConnection();
+        
+        try (PreparedStatement ps = conn.prepareStatement(sqlhd)) {
+            ps.setString(1, hd.getMaHD());
+            ps.setString(2, hd.getMaKHTour());
+            ps.setString(3, hd.getMaKHDat());
+            ps.setFloat(4, hd.getTongTien()); // Nếu DB là int thì đổi thành ps.setInt(4, (int) hd.getTongTien());
+            ps.setString(5, hd.getMaNV());
+            ps.setFloat(6, hd.getSoluong());  // Nếu DB là int thì đổi thành ps.setInt(6, (int) hd.getSoluong());
+            ps.setDate(7, java.sql.Date.valueOf(hd.getNgay()));
+            
+            int rowAffected = ps.executeUpdate();
+            return rowAffected > 0; // Trả về true nếu thêm thành công
+        }
+        
+    } catch (SQLException ex) {
+        ex.printStackTrace();
+    } finally {
+        if (conn != null) {
+            try {
+                conn.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+    return false;
+}
+    public boolean xoaHd(HoaDonDTO hd){
             String sqlct = "Delete from cthoadon where mahd=?";
             String sql="Delete from hoadon where mahd=?";
             
@@ -155,7 +139,7 @@ public class DsHoaDon {
           return false;
     }
     
-    public boolean suaHd(HoaDon hd){
+    public boolean suaHd(HoaDonDTO hd){
         String sqlhd ="Update hoadon set makhtour=?,makhangdat=?,tongtien=?,manv=?,soluong=?,ngay=? where mahd=?";
         
         try(Connection conn=KetNoiCSDL.getConnection();
@@ -190,8 +174,8 @@ public class DsHoaDon {
         return gia;
         }
         
-    public ArrayList<DTO.HoaDon> timNangcao(String tencot,String key){
-        ArrayList<DTO.HoaDon> ds =new ArrayList<>();
+    public ArrayList<org.example.dto.HoaDonDTO> timNangcao(String tencot,String key){
+        ArrayList<org.example.dto.HoaDonDTO> ds =new ArrayList<>();
         String sql ="Select * from Hoadon where "+ tencot +" like ?";
         
         try(Connection conn=KetNoiCSDL.getConnection();
@@ -200,7 +184,7 @@ public class DsHoaDon {
             ResultSet rs=ps.executeQuery();
             
             while(rs.next()){
-                DTO.HoaDon hd=maptoHd(rs);
+                org.example.dto.HoaDonDTO hd=maptoHd(rs);
                 ds.add(hd);
         }
     }catch(SQLException e){

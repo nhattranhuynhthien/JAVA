@@ -2,21 +2,21 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package BUS;
-import DAO.DsHoaDon;
-import DTO.CTietHD;
-import DTO.HoaDon;
+package org.example.bus;
+import org.example.dao.HoaDonDAO;
+import org.example.dto.CTietHDDTO;
+import org.example.dto.HoaDonDTO;
 import java.util.ArrayList;
 
 /**
  *
  * @author Nhat
  */
-public class HoaDonBus {
-    public static ArrayList<HoaDon> ds;
-    public static DsHoaDon dao = new DsHoaDon();
+public class HoaDonBUS {
+    public static ArrayList<HoaDonDTO> ds;
+    public static HoaDonDAO dao = new HoaDonDAO();
     
-    public HoaDonBus(){
+    public HoaDonBUS(){
         if(ds==null){
             ds=dao.getDsHoaDon();
         }
@@ -26,16 +26,16 @@ public class HoaDonBus {
         ds=dao.getDsHoaDon();
     }
     
-    public static ArrayList<HoaDon> getDs(){
+    public static ArrayList<HoaDonDTO> getDs(){
         if (ds == null) {
         ds = dao.getDsHoaDon();
     }
     return ds;
     }
     
-    public boolean timHd(HoaDon h){
+    public boolean timHd(HoaDonDTO h){
         if(dao.timHoaDon(h.getMaHD())!=null){
-            for(HoaDon hd: ds){
+            for(HoaDonDTO hd: ds){
                 if(hd.getMaHD().equals(h.getMaHD())){
                     return true;
                 }
@@ -47,14 +47,14 @@ public class HoaDonBus {
     public ArrayList docDS(){
         if(ds==null)
         {
-            ds=new ArrayList<HoaDon>();
+            ds=new ArrayList<HoaDonDTO>();
             ds=dao.getDsHoaDon();
         }
         return ds;
     }
-    public HoaDon timHd(String mahd){
+    public HoaDonDTO timHd(String mahd){
         if(dao.timHoaDon(mahd)!=null){
-            for(HoaDon hd: ds){
+            for(HoaDonDTO hd: ds){
                 if(hd.getMaHD().equals(mahd)){
                     return dao.timHoaDon(mahd);
                 }
@@ -63,12 +63,12 @@ public class HoaDonBus {
         return null;
     }
     
-    public boolean themHoaDon(HoaDon hd,ArrayList<CTietHD> listct){
+    public boolean themHoaDon(HoaDonDTO hd){
         if(timHd(hd)){
             return false;
         }
         
-        boolean kq=dao.themHoaDon(hd, listct);
+        boolean kq=dao.themHoaDon(hd);
         if(kq){
             ds.add(hd);
             return true;
@@ -77,7 +77,7 @@ public class HoaDonBus {
     }
     
     public boolean xoaHoaDon(String mahd){
-        HoaDon hd=dao.timHoaDon(mahd);
+        HoaDonDTO hd=dao.timHoaDon(mahd);
         boolean b=timHd(hd);
         if(hd==null){
             return false;
@@ -91,7 +91,7 @@ public class HoaDonBus {
         return true;
     }
     
-    public boolean suaHoaDon(HoaDon hd){
+    public boolean suaHoaDon(HoaDonDTO hd){
         if(!timHd(hd)){
             return false;
         }
@@ -112,7 +112,7 @@ public class HoaDonBus {
     
 
     
-    public ArrayList<DTO.HoaDon> timNangcao(String loai, String key){
+    public ArrayList<org.example.dto.HoaDonDTO> timNangcao(String loai, String key){
         if(key.trim().isEmpty()){
             return getDs();
     }
@@ -128,7 +128,7 @@ public class HoaDonBus {
         }else if(loai.equals("Mã nhân viên")){
             tencot="manv";
         }
-        ArrayList<DTO.HoaDon> ds =dao.timNangcao(tencot, key);
+        ArrayList<org.example.dto.HoaDonDTO> ds =dao.timNangcao(tencot, key);
         return ds;
 }
     

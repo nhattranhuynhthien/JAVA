@@ -2,28 +2,28 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package DAO;
+package org.example.dao;
 import java.sql.*;
-import DTO.CTietHD;
+import org.example.dto.CTietHDDTO;
 import java.util.*;
 import javax.swing.JOptionPane;
 /**
  *
  * @author Nhat
  */
-public class DsCTietHD {
-    public DsCTietHD() {
+public class CTietHDDAO {
+    public CTietHDDAO() {
     }
 
-    public ArrayList<CTietHD> getDs() {
-        ArrayList<CTietHD> ds=new ArrayList<>();
+    public ArrayList<CTietHDDTO> getDs() {
+        ArrayList<CTietHDDTO> ds=new ArrayList<>();
         String sql ="Select * from CThoadon";
         
         try(Connection conn=KetNoiCSDL.getConnection();
                 PreparedStatement ps=conn.prepareStatement(sql)){
             ResultSet rs=ps.executeQuery();
             while(rs.next()){
-                CTietHD ct=maptoCthd(rs);
+                CTietHDDTO ct=maptoCthd(rs);
                 ds.add(ct);
             }
             
@@ -33,15 +33,15 @@ public class DsCTietHD {
         return ds;
     }
     
-    public ArrayList<CTietHD> getDstheoma(String mahd){
-        ArrayList<CTietHD> ds=new ArrayList<>();
+    public ArrayList<CTietHDDTO> getDstheoma(String mahd){
+        ArrayList<CTietHDDTO> ds=new ArrayList<>();
         String sql ="Select * from CThoadon where mahd=?";
         try(Connection conn =KetNoiCSDL.getConnection();
                 PreparedStatement ps=conn.prepareStatement(sql)){
                 ps.setString(1, mahd);
                     ResultSet rs=ps.executeQuery();
                     while(rs.next()){
-                        CTietHD cthd=maptoCthd(rs);
+                        CTietHDDTO cthd=maptoCthd(rs);
                         ds.add(cthd);
                     }
                 }
@@ -53,14 +53,14 @@ public class DsCTietHD {
     }
     
 
-    public CTietHD maptoCthd(ResultSet rs) throws SQLException{
+    public CTietHDDTO maptoCthd(ResultSet rs) throws SQLException{
         String MaHD =rs.getString("MaHD");
         String MaKHDi =rs.getString("MaKHang");
         Float GiaVe =rs.getFloat("GiaVe");
-        return new CTietHD(MaHD,MaKHDi,GiaVe);
+        return new CTietHDDTO(MaHD,MaKHDi,GiaVe);
     }
     
-    public CTietHD TimHD(String mahd){
+    public CTietHDDTO TimHD(String mahd){
         String sql = "Select * from CThoadon where mahd=?";
         try(Connection conn=KetNoiCSDL.getConnection();
                 PreparedStatement ps=conn.prepareStatement(sql)){
@@ -75,7 +75,7 @@ public class DsCTietHD {
         return null;
     }
     
-    public boolean themCtietHD(CTietHD ct){
+    public boolean themCtietHD(CTietHDDTO ct){
         String sqlcheck = "Select * from cthoadon where mahd=? and makhang=?";
         String sqlinsert = "Insert into cthoadon(mahd,makhang,giave) Values(?,?,?)";
         String sqlUpdateHD = "UPDATE hoadon SET soluong = soluong + 1, tongtien = tongtien + ? WHERE mahd = ?";
@@ -185,8 +185,8 @@ public class DsCTietHD {
         return gia;
         }
      
-     public ArrayList<DTO.CTietHD> timNangcao(String tencot,String key){
-         ArrayList<DTO.CTietHD> ds =new ArrayList<>();
+     public ArrayList<org.example.dto.CTietHDDTO> timNangcao(String tencot,String key){
+         ArrayList<org.example.dto.CTietHDDTO> ds =new ArrayList<>();
          
          String sql="Select * from cthoadon where "+tencot+" like ?";
         
@@ -195,7 +195,7 @@ public class DsCTietHD {
              ps.setString(1, "%" + key + "%");
              ResultSet rs=ps.executeQuery();
              while(rs.next()){
-                 DTO.CTietHD ct =maptoCthd(rs);
+                 org.example.dto.CTietHDDTO ct =maptoCthd(rs);
                  ds.add(ct);
              }
              
@@ -205,7 +205,7 @@ public class DsCTietHD {
          return ds;
      }
      
-         public boolean suaCthd(CTietHD ct){
+         public boolean suaCthd(CTietHDDTO ct){
         String sql = "Update cthoadon set giave=? where mahd=? and makhang=?";
         try(Connection conn=KetNoiCSDL.getConnection();
                 PreparedStatement ps=conn.prepareStatement(sql)){

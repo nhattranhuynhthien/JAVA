@@ -2,7 +2,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package DTO;
+package org.example.dto;
 
 import java.time.LocalDate;
 
@@ -10,18 +10,18 @@ import java.time.LocalDate;
  *
  * @author Nhat
  */
-public class DiaDiem {
+public class DiaDiemDTO {
     public String TenDiaDiem;
     public LocalDate NgayThucHien; 
     public float TongChi;
 
-    public DiaDiem(String TenDiaDiem, LocalDate NgayThucHien, float TongChi) {
+    public DiaDiemDTO(String TenDiaDiem, LocalDate NgayThucHien, float TongChi) {
         this.TenDiaDiem = TenDiaDiem;
         this.NgayThucHien = NgayThucHien;
         this.TongChi = TongChi;
     }
     
-    public DiaDiem() {
+    public DiaDiemDTO() {
         this.TenDiaDiem = TenDiaDiem;
         this.NgayThucHien = NgayThucHien;
         this.TongChi = TongChi;

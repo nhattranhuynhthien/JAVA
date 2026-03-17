@@ -2,13 +2,13 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Other/File.java to edit this template
  */
-package DTO;
+package org.example.dto;
 
 /**
  *
  * @author Nhat
  */
-public class CTietHD {
+public class CTietHDDTO {
 
     /**
      * @param args the command line arguments
@@ -16,7 +16,7 @@ public class CTietHD {
     private String MaHD;
     private String MaKHDi;
     private float GiaVe;
-    public CTietHD(String MaHD, String MaKHDi, float GiaVe) {
+    public CTietHDDTO(String MaHD, String MaKHDi, float GiaVe) {
         this.MaHD = MaHD;
         this.MaKHDi = MaKHDi;
         this.GiaVe = GiaVe;

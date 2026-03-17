@@ -2,20 +2,20 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package BUS;
+package org.example.bus;
 
-import DAO.DsDiaDiem;
-import DTO.DiaDiem;
+import org.example.dao.DiaDiemDAO;
+import org.example.dto.DiaDiemDTO;
 import java.util.ArrayList;
 /**
  *
  * @author Nhat
  */
-public class DiaDiemBus {
-    public static ArrayList<DiaDiem> ds;
-    public static DsDiaDiem dao=new DsDiaDiem();
+public class DiaDiemBUS {
+    public static ArrayList<DiaDiemDTO> ds;
+    public static DiaDiemDAO dao=new DiaDiemDAO();
     
-    public DiaDiemBus(){
+    public DiaDiemBUS(){
         if(ds==null){
            ds=dao.getDs();
         }
@@ -25,12 +25,12 @@ public class DiaDiemBus {
         dao.getDs();
     }
  
-    public static ArrayList<DiaDiem> getDs(){
+    public static ArrayList<DiaDiemDTO> getDs(){
         return ds;
     }
     
-    public boolean timDiaDiem(DiaDiem dd){
-        for(DiaDiem d:ds){
+    public boolean timDiaDiem(DiaDiemDTO dd){
+        for(DiaDiemDTO d:ds){
             if(d.getTenDiaDiem().equals(dd.getTenDiaDiem())){
                 return true;
         }
@@ -39,14 +39,14 @@ public class DiaDiemBus {
         return false;
     }
     
-    public DiaDiem timDiaDiem(String tendd){
-        if(tendd==null || tendd.trim().isEmpty()){
+    public DiaDiemDTO timDiaDiem(String tendd){
+        if(tendd.trim().isEmpty()){
             return null;
         }
         return dao.TimDiaDiem(tendd);
     }
     
-    public boolean themDiaDiem(DiaDiem dd){
+    public boolean themDiaDiem(DiaDiemDTO dd){
         if(timDiaDiem(dd)){
             return false;
         }
@@ -60,7 +60,7 @@ public class DiaDiemBus {
         return true;   
     }
     
-    public boolean xoaDiaDiem(DiaDiem dd){
+    public boolean xoaDiaDiem(DiaDiemDTO dd){
         if(timDiaDiem(dd)!=true){
             return false;
         }
@@ -71,12 +71,12 @@ public class DiaDiemBus {
         return true;
     }
     
-    public boolean suaDiaDiem(DiaDiem dd){
+    public boolean suaDiaDiem(DiaDiemDTO dd,String tendd){
         if(timDiaDiem(dd)!=true){
             return false;
         }
         if(dao.TimDiaDiem(dd.getTenDiaDiem())!=null){
-            dao.suaDiaDiem(dd);
+            dao.suaDiaDiem(dd,tendd);
         }
         for(int i=0;i<ds.size();i++){
             if(ds.get(i).getTenDiaDiem().equals(dd.getTenDiaDiem())){

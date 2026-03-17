@@ -2,14 +2,14 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Main.java to edit this template
  */
-package DTO;
+package org.example.dto;
 import java.time.LocalDate;
 import java.util.*;
 /**
  *
  * @author Nhat
  */
-public class HoaDon {
+public class HoaDonDTO {
     public static Scanner sc = new Scanner(System.in);
     /**
      * @param args the command line arguments
@@ -22,7 +22,7 @@ public class HoaDon {
     private int soluong;
     private float TongTien;
     
-    public HoaDon(String MaHD, String MaKHTour, String MaKHDat, String MaNV,LocalDate ngay,int soluong, float TongTien) {
+    public HoaDonDTO(String MaHD, String MaKHTour, String MaKHDat, String MaNV,LocalDate ngay,int soluong, float TongTien) {
         this.MaHD = MaHD;
         this.MaKHTour = MaKHTour;
         this.MaKHDat = MaKHDat;
@@ -41,7 +41,7 @@ public class HoaDon {
     }
 
     public static void setSc(Scanner sc) {
-        HoaDon.sc = sc;
+        HoaDonDTO.sc = sc;
     }
 
     public void setSoluong(int soluong) {

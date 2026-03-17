@@ -2,9 +2,9 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JPanel.java to edit this template
  */
-package GUI.panel;
+package org.example.gui.panel;
 
-import BUS.HoaDonBus;
+import org.example.bus.HoaDonBUS;
 import java.awt.FlowLayout;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -16,16 +16,17 @@ import javax.swing.table.DefaultTableModel;
  *
  * @author Nhat
  */
-public class HoaDon extends javax.swing.JPanel {
-    private BUS.HoaDonBus bus;
+public class HoaDonPanel extends javax.swing.JPanel {
+    private org.example.bus.HoaDonBUS bus;
     private DefaultTableModel model;
     /**
      * Creates new form HoaDonNew
      */
-    public HoaDon() {
+    public HoaDonPanel() {
         initComponents();
-        bus=new BUS.HoaDonBus();
+        bus=new org.example.bus.HoaDonBUS();
         model=(DefaultTableModel) tblhoadon.getModel();
+        
         JPanel southPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 15, 10));
         loadData();;
     }
@@ -33,11 +34,11 @@ public class HoaDon extends javax.swing.JPanel {
     private void loadData(){
      model.setRowCount(0);
      bus.docDs();
-     ArrayList<DTO.HoaDon> ds = HoaDonBus.getDs();
+     ArrayList<org.example.dto.HoaDonDTO> ds = HoaDonBUS.getDs();
      if(ds==null) return;
-     for(DTO.HoaDon hd: ds){
+     for(org.example.dto.HoaDonDTO hd: ds){
          model.addRow(new Object[]{
-             hd.getMaHD(),hd.getMaKHTour(),hd.getMaKHDat(),hd.getMaNV(),Helper.DateHelper.toString(hd.getNgay()),hd.getSoluong(),String.format("%.0f",hd.getTongTien())
+             hd.getMaHD(),hd.getMaKHTour(),hd.getMaKHDat(),hd.getMaNV(),org.example.helper.DateHelper.toString(hd.getNgay()),hd.getSoluong(),String.format("%.0f",hd.getTongTien())
          });
      }
     }
@@ -45,11 +46,11 @@ public class HoaDon extends javax.swing.JPanel {
     private void loadData(String loai,String key){
      model.setRowCount(0);
      bus.docDs();
-     ArrayList<DTO.HoaDon> ds =bus.timNangcao(loai, key);
+     ArrayList<org.example.dto.HoaDonDTO> ds =bus.timNangcao(loai, key);
      if(ds==null) return;
-     for(DTO.HoaDon hd: ds){
+     for(org.example.dto.HoaDonDTO hd: ds){
          model.addRow(new Object[]{
-             hd.getMaHD(),hd.getMaKHTour(),hd.getMaKHDat(),hd.getMaNV(),Helper.DateHelper.toString(hd.getNgay()),hd.getSoluong(),hd.getTongTien()
+             hd.getMaHD(),hd.getMaKHTour(),hd.getMaKHDat(),hd.getMaNV(),org.example.helper.DateHelper.toString(hd.getNgay()),hd.getSoluong(),hd.getTongTien()
          });
      }
     }
@@ -66,6 +67,8 @@ public class HoaDon extends javax.swing.JPanel {
         jPanel1 = new javax.swing.JPanel();
         jLabel2 = new javax.swing.JLabel();
         jPanel2 = new javax.swing.JPanel();
+        jLabel3 = new javax.swing.JLabel();
+        jLabel1 = new javax.swing.JLabel();
         cbtim = new javax.swing.JComboBox<>();
         txttim = new javax.swing.JTextField();
         btntim = new javax.swing.JButton();
@@ -87,6 +90,10 @@ public class HoaDon extends javax.swing.JPanel {
         jLabel2.setText("Quản lý hóa đơn");
         jPanel1.add(jLabel2, java.awt.BorderLayout.CENTER);
 
+        jLabel3.setText("Tìm theo:");
+        jPanel2.add(jLabel3);
+        jPanel2.add(jLabel1);
+
         cbtim.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Mã hóa đơn", "Mã kế hoạch tour", "Mã khách hàng đặt", "Mã nhân viên" }));
         jPanel2.add(cbtim);
 
@@ -94,6 +101,11 @@ public class HoaDon extends javax.swing.JPanel {
         txttim.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 txttimActionPerformed(evt);
+            }
+        });
+        txttim.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                txttimKeyReleased(evt);
             }
         });
         jPanel2.add(txttim);
@@ -115,11 +127,11 @@ public class HoaDon extends javax.swing.JPanel {
 
             },
             new String [] {
-                "Mã hóa đơn", "Mã kế hoạch tour", "Mã khách hàng đặt", "Mã nhân viên", "Ngày", "Số lượng", "Tổng tiền"
+                "Mã hóa đơn", "Mã kế hoạch tour", "Mã khách hàng đặt", "Mã nhân viên", "Ngày", "Số lượng", "Tổng tiền", "Xuất"
             }
         ) {
             boolean[] canEdit = new boolean [] {
-                false, false, false, false, true, false, false
+                false, false, false, false, true, false, false, true
             };
 
             public boolean isCellEditable(int rowIndex, int columnIndex) {
@@ -190,25 +202,29 @@ public class HoaDon extends javax.swing.JPanel {
             if(evt.getClickCount()==2){
                 String ma=tblhoadon.getValueAt(row, 0).toString();
                 
-                String[] option={"Chỉnh sửa","Chi tiết hóa đơn","Hủy"};
+                String[] option={"Chỉnh sửa","Chi tiết hóa đơn","Xuất Excel dòng này"};
                 
                 int choice=JOptionPane.showOptionDialog(this, "Vui lòng chọn lựa chọn", "Tùy chọn", JOptionPane.DEFAULT_OPTION, JOptionPane.QUESTION_MESSAGE, null, option, option[1]);
                 
                 if(choice==0){
-                    DTO.HoaDon hd=new DTO.HoaDon(tblhoadon.getValueAt(row, 0).toString(), tblhoadon.getValueAt(row, 1).toString(), tblhoadon.getValueAt(row, 2).toString(), tblhoadon.getValueAt(row, 3).toString(), LocalDate.parse(tblhoadon.getValueAt(row, 4).toString()),Integer.parseInt(tblhoadon.getValueAt(row, 5).toString()),Float.parseFloat(tblhoadon.getValueAt(row, 6).toString()));
-                    GUI.dialog.HoaDonDialog hdd =new GUI.dialog.HoaDonDialog(hd);
+                    org.example.dto.HoaDonDTO hd=new org.example.dto.HoaDonDTO(tblhoadon.getValueAt(row, 0).toString(), tblhoadon.getValueAt(row, 1).toString(), tblhoadon.getValueAt(row, 2).toString(), tblhoadon.getValueAt(row, 3).toString(),org.example.helper.DateHelper.toLocalDate(tblhoadon.getValueAt(row, 4).toString()),Integer.parseInt(tblhoadon.getValueAt(row, 5).toString()),Float.parseFloat(tblhoadon.getValueAt(row, 6).toString()));
+                    org.example.gui.dialog.HoaDonDialog hdd =new org.example.gui.dialog.HoaDonDialog(hd);
                     hdd.setModal(true);
                     hdd.setVisible(true);
                     loadData();
                 }else if(choice==1){
-                    GUI.panel.CTHoaDon cthd=new GUI.panel.CTHoaDon(ma);
+                    org.example.gui.panel.CTHoaDonPanel cthd=new org.example.gui.panel.CTHoaDonPanel(ma);
                     
                     int result=JOptionPane.showConfirmDialog(null, cthd,"Chi tiết hóa đơn",JOptionPane.OK_CANCEL_OPTION,JOptionPane.PLAIN_MESSAGE);
                     loadData();
                     if(result==JOptionPane.OK_OPTION){
                         return;
                     }
-                }else if(choice==2){
+                }else if(choice == 2){
+                    // 2. NẾU CHỌN XUẤT EXCEL THÌ GỌI HÀM NÀY
+                    // Truyền thẳng biến 'row' mà bạn đã lấy ở trên vào
+                    org.example.helper.ExcelHelper.xuatExcel1Dong(tblhoadon, row, this, "ChiTiet_" + ma);
+                } else if(choice == 3){
                     return;
                 }
             }            
@@ -217,7 +233,7 @@ public class HoaDon extends javax.swing.JPanel {
 
     private void btnthemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnthemActionPerformed
         // TODO add your handling code here:
-        GUI.dialog.HoaDonDialog hdd=new GUI.dialog.HoaDonDialog();
+        org.example.gui.dialog.HoaDonDialog hdd=new org.example.gui.dialog.HoaDonDialog();
         hdd.setModal(true);
         hdd.setVisible(true);
         loadData();
@@ -235,7 +251,7 @@ public class HoaDon extends javax.swing.JPanel {
             int cf =JOptionPane.showConfirmDialog(this, "Bạn có muốn xóa không?","Xác nhận",JOptionPane.YES_NO_OPTION);
             if(cf==JOptionPane.YES_OPTION){
                 String ma = tblhoadon.getValueAt(row, 0).toString();
-                DTO.HoaDon hd=bus.timHd(ma);
+                org.example.dto.HoaDonDTO hd=bus.timHd(ma);
 
                 if(bus.xoaHoaDon(ma)){
                     DefaultTableModel model=(DefaultTableModel) tblhoadon.getModel();
@@ -253,7 +269,7 @@ public class HoaDon extends javax.swing.JPanel {
 
     private void btnxuatActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnxuatActionPerformed
         // TODO add your handling code here:
-        Helper.ExcelHelper.xuatExcel(tblhoadon, this, "Danh sách hóa đơn");
+        org.example.helper.ExcelHelper.xuatExcel(tblhoadon, this, "Danh sách hóa đơn");
     }//GEN-LAST:event_btnxuatActionPerformed
 
     private void btntimActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btntimActionPerformed
@@ -284,9 +300,9 @@ public class HoaDon extends javax.swing.JPanel {
             return;
         }
         String ma =tblhoadon.getValueAt(row, 0).toString().trim();
-        DTO.HoaDon hd=bus.timHd(ma);
+        org.example.dto.HoaDonDTO hd=bus.timHd(ma);
         if(hd!=null){
-            GUI.dialog.HoaDonDialog hdd=new GUI.dialog.HoaDonDialog(hd);
+            org.example.gui.dialog.HoaDonDialog hdd=new org.example.gui.dialog.HoaDonDialog(hd);
             hdd.setModal(true);
             hdd.setVisible(true);
             loadData();
@@ -300,6 +316,13 @@ public class HoaDon extends javax.swing.JPanel {
         loadData();
     }//GEN-LAST:event_btnresetActionPerformed
 
+    private void txttimKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txttimKeyReleased
+        // TODO add your handling code here:
+        String text=txttim.getText().trim();
+        String loai =cbtim.getSelectedItem().toString().trim();
+        loadData(loai, text);
+    }//GEN-LAST:event_txttimKeyReleased
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnreset;
@@ -309,7 +332,9 @@ public class HoaDon extends javax.swing.JPanel {
     private javax.swing.JButton btnxoa;
     private javax.swing.JButton btnxuat;
     private javax.swing.JComboBox<String> cbtim;
+    private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
